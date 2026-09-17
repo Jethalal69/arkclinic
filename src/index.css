@@ -1,0 +1,185 @@
+:root {
+  /* Color Palette - Premium Healthcare */
+  --bg-primary: #FDFBF7;
+  --bg-secondary: #F7F3EB;
+  --bg-surface: #FFFFFF;
+  --bg-subtle: #F3ECE1;
+  --bg-burgundy-soft: #FBF4F5;
+
+  --color-burgundy: #45101A;
+  --color-burgundy-deep: #320A12;
+  --color-burgundy-hover: #5A1724;
+  --color-burgundy-active: #2C070F;
+
+  --color-gold: #B68636;
+  --color-gold-light: #CBA258;
+  --color-gold-dark: #9B7028;
+  --color-gold-hover: #9F722A;
+  --color-gold-gradient: linear-gradient(135deg, #C59B4B 0%, #A4782B 100%);
+  --color-gold-soft: #FAF4E8;
+
+  --color-text-main: #141211;
+  --color-text-body: #48443F;
+  --color-text-muted: #76716B;
+  --color-text-light: #9E9992;
+
+  --border-color: #ECE5DA;
+  --border-subtle: #F2ECE3;
+  --border-gold: rgba(182, 134, 54, 0.25);
+  --border-burgundy: rgba(69, 16, 26, 0.15);
+
+  /* Typography */
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 3px rgba(45, 20, 24, 0.04);
+  --shadow-sm: 0 4px 12px rgba(45, 20, 24, 0.05);
+  --shadow-md: 0 8px 24px -4px rgba(45, 20, 24, 0.08);
+  --shadow-lg: 0 16px 40px -8px rgba(45, 20, 24, 0.12);
+  --shadow-elevated: 0 20px 48px -12px rgba(50, 10, 18, 0.18);
+  --shadow-gold: 0 8px 24px -4px rgba(182, 134, 54, 0.25);
+
+  /* Radii */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-base: 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  background-color: var(--bg-primary);
+  color: var(--color-text-main);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  color: var(--color-text-body);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+
+/* Base Link & Button Resets */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  outline: none;
+}
+
+button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+/* Container Utilities */
+.container {
+  width: 100%;
+  max-width: 1380px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-left: 36px;
+    padding-right: 36px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+}
+
+/* Typography Utilities */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.text-gold {
+  color: var(--color-gold);
+}
+
+.text-gold-gradient {
+  background: var(--color-gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+}
+
+/* Subtle organic plant leaf background watermark in corners */
+.app-wrapper {
+  position: relative;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  background-image: 
+    radial-gradient(ellipse 60% 40% at 0% 0%, rgba(247, 243, 235, 0.7) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 100% 100%, rgba(247, 243, 235, 0.6) 0%, transparent 50%);
+  overflow-x: clip;
+}
+
+/* Subtle corner ambient leaves */
+.ambient-decor-bl {
+  position: absolute;
+  bottom: 0;
+  left: -20px;
+  width: 280px;
+  height: 280px;
+  pointer-events: none;
+  opacity: 0.14;
+  z-index: 1;
+  background: radial-gradient(circle, #3d5a45 0%, transparent 70%);
+  filter: blur(50px);
+  animation: ambientFloat 14s infinite ease-in-out alternate;
+}
+
+@keyframes ambientFloat {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.12;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.08);
+    opacity: 0.18;
+  }
+  100% {
+    transform: translateY(10px) scale(0.96);
+    opacity: 0.12;
+  }
+}

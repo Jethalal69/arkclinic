@@ -1,0 +1,553 @@
+/* ==========================================================================
+   ARK CLINIC - HERO SECTION NAVBAR STYLES
+   Cinematic, minimal navigation directly over the biotech video background
+   ========================================================================== */
+
+.site-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: none !important;
+  transition: background-color 300ms cubic-bezier(0.16, 1, 0.3, 1),
+              backdrop-filter 300ms cubic-bezier(0.16, 1, 0.3, 1),
+              padding 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.site-header.scrolled {
+  position: fixed;
+  background-color: rgba(6, 10, 24, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.28);
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 80px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  gap: 32px;
+}
+
+.site-header.scrolled .header-container {
+  min-height: 68px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+/* --------------------------------------------------------------------------
+   LEFT: Brand Lockup (Logo ~42-45px + Wordmark)
+   -------------------------------------------------------------------------- */
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  transition: opacity 200ms ease;
+}
+
+.brand-lockup:hover {
+  opacity: 0.92;
+}
+
+.logo-emblem-wrap {
+  height: 44px;
+  width: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+.logo-emblem-wrap.small {
+  height: 38px;
+  width: 38px;
+}
+
+.logo-emblem {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.brand-name {
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #FFFFFF;
+  line-height: 1.1;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.brand-tagline {
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 2px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   CENTER: Desktop Navigation (Floating links directly over background)
+   -------------------------------------------------------------------------- */
+.desktop-nav {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .desktop-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.nav-list {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Smooth Sliding Hover Highlight Pill (Only visible on hover) */
+.nav-hover-pill {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 9999px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 1;
+  transition: transform 250ms cubic-bezier(0.2, 0.9, 0.3, 1),
+              width 250ms cubic-bezier(0.2, 0.9, 0.3, 1),
+              opacity 180ms ease;
+  will-change: transform, width, opacity;
+  list-style: none;
+}
+
+.nav-link {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  padding: 0 16px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.88);
+  border-radius: 9999px;
+  transition: color 200ms ease;
+  user-select: none;
+  text-decoration: none;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+.nav-link:hover {
+  color: #FFFFFF;
+}
+
+/* --------------------------------------------------------------------------
+   RIGHT: Actions (Subtle Phone Number + Primary CTA)
+   -------------------------------------------------------------------------- */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+/* Subtle Phone / WhatsApp: Understated so it doesn't compete with main CTA */
+.contact-direct {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  font-size: 0.84rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 6px 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  transition: color 200ms ease, opacity 200ms ease, transform 200ms ease;
+}
+
+@media (min-width: 860px) {
+  .contact-direct {
+    display: inline-flex;
+  }
+}
+
+.contact-direct:hover {
+  color: #FFFFFF;
+  opacity: 1;
+  transform: translateY(-0.5px);
+}
+
+.contact-icon {
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 200ms ease;
+}
+
+.contact-direct:hover .contact-icon {
+  color: #FFFFFF;
+}
+
+.contact-number {
+  line-height: 1;
+}
+
+/* Primary CTA Button: Refined, Crisp Warm-White Solid */
+.header-cta-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 18px;
+  background-color: #FAF7F0;
+  color: #121620;
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.84rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: 9999px;
+  border: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.22);
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+@media (min-width: 640px) {
+  .header-cta-btn {
+    display: inline-flex;
+  }
+}
+
+.header-cta-btn:hover {
+  background-color: #FFFFFF;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 18px rgba(255, 255, 255, 0.22), 0 2px 8px rgba(0, 0, 0, 0.28);
+}
+
+.header-cta-btn:active {
+  transform: translateY(0);
+}
+
+.cta-arrow {
+  display: inline-block;
+  font-size: 0.92rem;
+  transition: transform 200ms ease;
+}
+
+.header-cta-btn:hover .cta-arrow {
+  transform: translateX(3px);
+}
+
+/* --------------------------------------------------------------------------
+   MOBILE: Hamburger Toggle & Drawer
+   -------------------------------------------------------------------------- */
+.mobile-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 9999px;
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background-color 200ms ease, border-color 200ms ease;
+}
+
+@media (min-width: 1024px) {
+  .mobile-toggle-btn {
+    display: none;
+  }
+}
+
+.mobile-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Mobile Drawer */
+.mobile-drawer {
+  position: fixed;
+  inset: 0;
+  visibility: hidden;
+  z-index: 200;
+  transition: visibility 300ms ease;
+}
+
+.mobile-drawer.open {
+  visibility: visible;
+}
+
+.mobile-drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(4, 6, 18, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.mobile-drawer.open .mobile-drawer-backdrop {
+  opacity: 1;
+}
+
+.mobile-drawer-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  max-width: 320px;
+  height: 100%;
+  background-color: rgba(8, 12, 28, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: -8px 0 36px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 24px 20px;
+  box-sizing: border-box;
+}
+
+.mobile-drawer.open .mobile-drawer-panel {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.drawer-close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: background-color 200ms ease;
+}
+
+.drawer-close-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.mobile-nav {
+  flex: 1;
+  padding: 24px 0;
+  overflow-y: auto;
+}
+
+.mobile-nav-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.88);
+  text-decoration: none;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-link:active {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
+}
+
+.mobile-link-arrow {
+  color: rgba(255, 255, 255, 0.4);
+  transition: transform 200ms ease;
+}
+
+.mobile-nav-link:hover .mobile-link-arrow {
+  transform: translateX(3px);
+  color: #FFFFFF;
+}
+
+.mobile-drawer-footer {
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mobile-contact-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: #FFFFFF;
+  text-decoration: none;
+  transition: background-color 200ms ease;
+}
+
+.mobile-contact-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mobile-contact-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.mobile-contact-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-contact-title {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.mobile-contact-number {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #FFFFFF;
+}
+
+.mobile-cta-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #FAF8F3;
+  color: #121620;
+  padding: 12px 18px;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  border: none;
+  cursor: pointer;
+  transition: background-color 200ms ease, transform 200ms ease;
+}
+
+.mobile-cta-btn:hover {
+  background-color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   Mobile Header Breakpoint Refinement
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .header-container {
+    min-height: 64px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    gap: 16px;
+  }
+
+  .logo-emblem-wrap {
+    height: 40px;
+    width: 40px;
+  }
+
+  .brand-name {
+    font-size: 1.22rem;
+  }
+
+  .brand-tagline {
+    font-size: 0.52rem;
+    letter-spacing: 0.12em;
+  }
+
+  .mobile-toggle-btn {
+    width: 40px;
+    height: 40px;
+  }
+}
+

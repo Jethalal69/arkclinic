@@ -1,0 +1,416 @@
+/* ==========================================================================
+   ARK CLINIC - SERVICES SECTION STYLES
+   Intentionally Asymmetric Editorial Healthcare Layout
+   Three Varied Row Proportions, Translucent Frosted Glass Cards & Pure DNA Background
+   ========================================================================== */
+
+.services-section {
+  position: relative;
+  width: 100%;
+  padding-top: 76px;
+  padding-bottom: 108px;
+  background-color: #070B18;
+  background-image: url('/images/DNA_helix_floating_in_gradient_2K_20260916224130.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .services-section {
+    padding-top: 92px;
+    padding-bottom: 124px;
+  }
+}
+
+.services-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 1240px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* --------------------------------------------------------------------------
+   SECTION HEADER (Centered, High-Contrast Editorial Typography)
+   -------------------------------------------------------------------------- */
+.services-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 52px;
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+@media (min-width: 1024px) {
+  .services-header {
+    margin-bottom: 64px;
+  }
+}
+
+.services-visible .services-header {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.services-eyebrow-wrap {
+  margin-bottom: 14px;
+}
+
+.services-eyebrow {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #D4AF37;
+  display: inline-block;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+}
+
+.services-heading {
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-size: clamp(2.3rem, 3.8vw, 3.25rem);
+  font-weight: 500;
+  color: #FFFFFF;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin-bottom: 18px;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+}
+
+.services-description {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 1.02rem;
+  font-weight: 300;
+  line-height: 1.74;
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 620px;
+  margin: 0 auto;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* --------------------------------------------------------------------------
+   ASYMMETRIC EDITORIAL GRID (24-Column Flexible Desktop Layout)
+   -------------------------------------------------------------------------- */
+.services-asymmetric-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  width: 100%;
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .services-asymmetric-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .services-asymmetric-grid {
+    grid-template-columns: repeat(24, 1fr);
+    gap: 24px 22px;
+    align-items: stretch;
+  }
+
+  /* ROW 1: In-Clinic (58.3%) + Online Video (41.7%) */
+  .card-in-clinic {
+    grid-column: span 14;
+  }
+  .card-online-video {
+    grid-column: span 10;
+  }
+
+  /* ROW 2: Telephonic (37.5%) + Home Visit (62.5%) */
+  .card-telephonic {
+    grid-column: span 9;
+  }
+  .card-home-visit {
+    grid-column: span 15;
+  }
+
+  /* ROW 3: Family Healthcare (45.8%) + Preventive Healthcare (54.2%) */
+  .card-family-care {
+    grid-column: span 11;
+  }
+  .card-preventive-care {
+    grid-column: span 13;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   SERVICE CARD (Translucent Glass Aesthetic, Equal Weight & Balanced Pacing)
+   -------------------------------------------------------------------------- */
+.service-card {
+  position: relative;
+  background-color: rgba(14, 23, 56, 0.68);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 16px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(22px);
+  transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 280ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 280ms cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 280ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+  overflow: hidden;
+}
+
+/* Top Subtle Gold Hairline */
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 8%;
+  right: 8%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(212, 175, 55, 0.32),
+    transparent
+  );
+  opacity: 0.65;
+  transition: opacity 280ms ease;
+  pointer-events: none;
+}
+
+.services-visible .service-card {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1) var(--card-delay, 0ms),
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1) var(--card-delay, 0ms),
+              box-shadow 280ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 280ms cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 280ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.services-visible .service-card:hover {
+  transform: translateY(-4px);
+  background-color: rgba(18, 30, 72, 0.80);
+  border-color: rgba(212, 175, 55, 0.35);
+  box-shadow: 0 18px 42px -6px rgba(0, 0, 0, 0.48), 0 0 32px rgba(46, 75, 172, 0.22);
+}
+
+.services-visible .service-card:hover::before {
+  opacity: 1;
+}
+
+/* Card Internal Layout & Padding */
+.service-card-inner {
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+
+@media (min-width: 640px) {
+  .service-card-inner {
+    padding: 26px 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .service-card-inner {
+    padding: 32px 30px;
+  }
+}
+
+/* Card Top: Icon & Index Number */
+.service-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 1024px) {
+  .service-card-top {
+    margin-bottom: 22px;
+  }
+}
+
+.service-icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background-color: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  color: #D4AF37;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 260ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 260ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.service-icon {
+  stroke-width: 2;
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.service-card:hover .service-icon-box {
+  background-color: rgba(212, 175, 55, 0.2);
+  border-color: rgba(212, 175, 55, 0.45);
+  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.25);
+  transform: scale(1.05);
+}
+
+.service-card-number {
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: rgba(212, 175, 55, 0.4);
+  letter-spacing: -0.01em;
+  user-select: none;
+  transition: color 260ms ease;
+}
+
+.service-card:hover .service-card-number {
+  color: rgba(212, 175, 55, 0.85);
+}
+
+/* Card Body */
+.service-card-body {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  flex-grow: 1;
+}
+
+@media (min-width: 1024px) {
+  .service-card-body {
+    margin-bottom: 24px;
+  }
+}
+
+.service-card-title {
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-size: 1.16rem;
+  font-weight: 600;
+  line-height: 1.32;
+  color: #FFFFFF;
+  margin-bottom: 7px;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+@media (min-width: 640px) {
+  .service-card-title {
+    font-size: 1.20rem;
+    margin-bottom: 8px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .service-card-title {
+    font-size: 1.22rem;
+    margin-bottom: 10px;
+  }
+}
+
+.service-card-desc {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.90rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.62;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+}
+
+@media (min-width: 640px) {
+  .service-card-desc {
+    font-size: 0.92rem;
+    line-height: 1.64;
+  }
+}
+
+@media (min-width: 1024px) {
+  .service-card-desc {
+    font-size: 0.93rem;
+    line-height: 1.66;
+    color: rgba(255, 255, 255, 0.78);
+    max-width: 480px;
+  }
+}
+
+/* Card Footer & Learn More Interaction */
+.service-card-footer {
+  margin-top: auto;
+  padding-top: 2px;
+}
+
+@media (min-width: 1024px) {
+  .service-card-footer {
+    padding-top: 4px;
+  }
+}
+
+.service-learn-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #D4AF37;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 200ms ease;
+}
+
+@media (min-width: 1024px) {
+  .service-learn-more {
+    font-size: 0.88rem;
+  }
+}
+
+.learn-more-arrow {
+  color: #D4AF37;
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              color 200ms ease;
+}
+
+.service-card:hover .learn-more-arrow {
+  transform: translateX(4px);
+  color: #F0D278;
+}
+
+/* --------------------------------------------------------------------------
+   Reduced Motion Accessibility
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .services-header,
+  .service-card {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .service-icon-box,
+  .learn-more-arrow {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+

@@ -1,0 +1,853 @@
+/* ==========================================================================
+   ARK CLINIC - APPOINTMENT BOOKING FORM & SECTION STYLES
+   Liquid Glass / Glassmorphism Form Surface over Exact DNA Section Background
+   Exact Background Image: 6960d4cb-812a-45ed-810a-645fc9d83dda.jpeg
+   ========================================================================== */
+
+.appointment-section {
+  position: relative;
+  width: 100%;
+  padding-top: 80px;
+  padding-bottom: 120px;
+  background-color: #F4F7FC;
+  background-image: url('/images/6960d4cb-812a-45ed-810a-645fc9d83dda.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  border-top: 1px solid rgba(236, 229, 218, 0.7);
+}
+
+@media (min-width: 1024px) {
+  .appointment-section {
+    padding-top: 96px;
+    padding-bottom: 140px;
+  }
+}
+
+.appointment-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+@media (min-width: 768px) {
+  .appointment-container {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   CENTERED INTRODUCTORY SECTION HEADER (Exact Text Retained)
+   -------------------------------------------------------------------------- */
+.appointment-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 44px;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 1024px) {
+  .appointment-header {
+    margin-bottom: 52px;
+  }
+}
+
+.appointment-visible .appointment-header {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.appointment-eyebrow-wrap {
+  margin-bottom: 14px;
+}
+
+.appointment-eyebrow-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 18px;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #45101A;
+  box-shadow: 0 2px 10px rgba(69, 16, 26, 0.04);
+  text-transform: uppercase;
+}
+
+.appointment-eyebrow-icon {
+  color: #B68636;
+}
+
+.appointment-heading {
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-size: clamp(2.3rem, 4vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.16;
+  color: #45101A;
+  margin-bottom: 16px;
+  letter-spacing: -0.015em;
+}
+
+.appointment-description {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: clamp(1rem, 1.3vw, 1.08rem);
+  font-weight: 400;
+  color: #48443F;
+  line-height: 1.68;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   PREMIUM LIQUID GLASS / GLASSMORPHISM FORM CARD SURFACE
+   -------------------------------------------------------------------------- */
+.appointment-form-card {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.44);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 20px;
+  box-shadow: 0 20px 48px -12px rgba(45, 20, 24, 0.05),
+              0 4px 16px rgba(0, 0, 0, 0.02),
+              inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  padding: 24px 18px;
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s,
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
+}
+
+@media (min-width: 480px) {
+  .appointment-form-card {
+    padding: 32px 24px;
+  }
+}
+
+@media (min-width: 768px) {
+  .appointment-form-card {
+    padding: 40px 36px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .appointment-form-card {
+    padding: 48px 48px;
+    border-radius: 24px;
+  }
+}
+
+.appointment-visible .appointment-form-card {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.appointment-card-header {
+  margin-bottom: 32px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(182, 134, 54, 0.16);
+}
+
+.appointment-card-title {
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-size: clamp(1.5rem, 2.5vw, 2.05rem);
+  font-weight: 600;
+  color: #320A12;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.appointment-card-desc {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.94rem;
+  color: #64748B;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   FORM TWO-COLUMN LAYOUT
+   -------------------------------------------------------------------------- */
+.appointment-booking-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.appointment-form-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+  margin-bottom: 28px;
+}
+
+@media (min-width: 1024px) {
+  .appointment-form-layout {
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 48px;
+    margin-bottom: 36px;
+  }
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+@media (min-width: 1024px) {
+  .form-column {
+    gap: 26px;
+  }
+}
+
+.form-column-header {
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(182, 134, 54, 0.18);
+  margin-bottom: 2px;
+}
+
+.form-group-label {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #B68636;
+  display: inline-block;
+}
+
+.form-group-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-section-label {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #45101A;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+@media (min-width: 1024px) {
+  .form-section-label {
+    font-size: 0.88rem;
+  }
+}
+
+.form-sub-label {
+  display: block;
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.required-mark {
+  color: #B91C1C;
+  font-weight: 700;
+}
+
+.optional-tag {
+  font-size: 0.76rem;
+  font-weight: 400;
+  color: #64748B;
+  text-transform: none;
+  letter-spacing: normal;
+  margin-left: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   1. CONSULTATION MODES GRID (Translucent Glass Buttons)
+   -------------------------------------------------------------------------- */
+.consultation-modes-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 480px) {
+  .consultation-modes-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+.mode-option-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 15px;
+  min-height: 52px;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  text-align: left;
+  cursor: pointer;
+  transition: all 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.mode-option-btn:hover {
+  background-color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(182, 134, 54, 0.55);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(182, 134, 54, 0.12);
+}
+
+.mode-option-btn.mode-selected {
+  background-color: rgba(255, 249, 238, 0.92);
+  border-color: #B68636;
+  box-shadow: 0 4px 16px rgba(182, 134, 54, 0.16), inset 0 0 0 1px #B68636;
+}
+
+.mode-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background-color: rgba(69, 16, 26, 0.08);
+  color: #45101A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 220ms ease;
+}
+
+.mode-selected .mode-icon-box {
+  background-color: #45101A;
+  color: #FAF4E8;
+}
+
+.mode-text-box {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.mode-title {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1E293B;
+  line-height: 1.25;
+}
+
+.mode-selected .mode-title {
+  color: #320A12;
+}
+
+.mode-subtitle {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.76rem;
+  color: #526071;
+  line-height: 1.25;
+}
+
+.mode-radio-indicator {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(203, 213, 225, 0.95);
+  background-color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 200ms ease;
+}
+
+.mode-selected .mode-radio-indicator {
+  border-color: #B68636;
+  background-color: #B68636;
+}
+
+.mode-radio-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 200ms ease;
+}
+
+.mode-selected .mode-radio-dot {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* --------------------------------------------------------------------------
+   FORM INPUTS, SELECTS & ICONS (Translucent Glass Input Surfaces)
+   -------------------------------------------------------------------------- */
+.input-with-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-prefix-icon {
+  position: absolute;
+  left: 14px;
+  color: #94A3B8;
+  pointer-events: none;
+  transition: color 200ms ease;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.92rem;
+  color: #1E293B;
+  background-color: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  padding: 12px 14px 12px 42px;
+  outline: none;
+  transition: border-color 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.form-input,
+.form-select {
+  height: 48px;
+}
+
+.form-textarea {
+  padding: 12px 14px;
+  resize: vertical;
+  min-height: 74px;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  background-color: rgba(255, 255, 255, 0.92);
+  border-color: #B68636;
+  box-shadow: 0 0 0 3px rgba(182, 134, 54, 0.16);
+}
+
+.input-with-icon-wrap:focus-within .input-prefix-icon {
+  color: #B68636;
+}
+
+.form-input.input-error,
+.form-select.input-error {
+  border-color: #EF4444;
+  background-color: rgba(254, 242, 242, 0.8);
+}
+
+.field-error-text {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #DC2626;
+  margin: 4px 0 0;
+}
+
+/* Two-column sub-grid for Date and Time */
+.form-row-two-col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 540px) {
+  .form-row-two-col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.patient-inputs-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Dynamic Address Field for Home Visit (Smooth Glass Reveal Animation) */
+.address-dynamic-field {
+  display: flex;
+  flex-direction: column;
+  animation: expandAddress 280ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes expandAddress {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.textarea-icon-wrap {
+  align-items: flex-start;
+}
+
+.textarea-prefix-icon {
+  top: 14px;
+}
+
+.form-address-input {
+  padding-left: 42px;
+  min-height: 70px;
+}
+
+/* --------------------------------------------------------------------------
+   7. UPLOAD MEDICAL DOCUMENTS DROPZONE (Translucent Glass Dropzone)
+   -------------------------------------------------------------------------- */
+.hidden-file-input {
+  display: none;
+}
+
+.upload-dropzone {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1.5px dashed rgba(182, 134, 54, 0.38);
+  background-color: rgba(255, 255, 255, 0.48);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: all 220ms ease;
+}
+
+.upload-dropzone:hover,
+.upload-dropzone.dropzone-active {
+  border-color: #B68636;
+  background-color: rgba(255, 255, 255, 0.78);
+}
+
+.upload-icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  color: #B68636;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.upload-text-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.upload-title {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.upload-subtitle {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.76rem;
+  color: #64748B;
+}
+
+.uploaded-file-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background-color: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+}
+
+.file-pill-icon {
+  color: #45101A;
+  flex-shrink: 0;
+}
+
+.file-pill-name {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #1E293B;
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-remove-btn {
+  background: none;
+  border: none;
+  color: #64748B;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 180ms ease;
+}
+
+.file-remove-btn:hover {
+  background-color: rgba(226, 232, 240, 0.8);
+  color: #EF4444;
+}
+
+/* --------------------------------------------------------------------------
+   8. SUBMIT BUTTON & SECURITY REASSURANCE
+   -------------------------------------------------------------------------- */
+.form-submit-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(182, 134, 54, 0.18);
+}
+
+.appointment-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 52px;
+  padding: 0 28px;
+  background-color: #45101A;
+  color: #FAF7F0;
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.96rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(69, 16, 26, 0.28);
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 1024px) {
+  .appointment-submit-btn {
+    max-width: 380px;
+    padding: 0 32px;
+  }
+}
+
+.appointment-submit-btn:hover:not(:disabled) {
+  background-color: #5A1724;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(69, 16, 26, 0.36);
+}
+
+.appointment-submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.appointment-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.submit-arrow {
+  transition: transform 200ms ease;
+}
+
+.appointment-submit-btn:hover:not(:disabled) .submit-arrow {
+  transform: translateX(4px);
+}
+
+.form-security-reassurance {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.82rem;
+  color: #526071;
+  margin: 0;
+}
+
+.security-lock-icon {
+  color: #B68636;
+}
+
+/* --------------------------------------------------------------------------
+   POLISHED CONFIRMATION / SUCCESS STATE (Translucent Frosted Card)
+   -------------------------------------------------------------------------- */
+.appointment-success-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 36px 16px;
+  animation: fadeInSuccess 400ms ease-out forwards;
+}
+
+@keyframes fadeInSuccess {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.success-icon-badge {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background-color: rgba(255, 249, 238, 0.85);
+  border: 2px solid #B68636;
+  color: #B68636;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 20px rgba(182, 134, 54, 0.18);
+}
+
+.success-title {
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-size: clamp(1.8rem, 3vw, 2.3rem);
+  font-weight: 600;
+  color: #320A12;
+  margin-bottom: 12px;
+}
+
+.success-message {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.98rem;
+  color: #475569;
+  line-height: 1.65;
+  max-width: 580px;
+  margin: 0 auto 28px;
+}
+
+.success-summary-card {
+  width: 100%;
+  max-width: 440px;
+  background-color: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 14px;
+  padding: 18px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+  text-align: left;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.88rem;
+}
+
+.summary-label {
+  color: #64748B;
+  font-weight: 500;
+}
+
+.summary-value {
+  color: #1E293B;
+  font-weight: 600;
+}
+
+.summary-highlight {
+  color: #B68636;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.demo-notice-text {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.78rem;
+  color: #64748B;
+  margin: 0 auto 24px;
+  text-align: center;
+  font-style: italic;
+  max-width: 440px;
+}
+
+.appointment-another-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 26px;
+  background-color: rgba(255, 255, 255, 0.85);
+  color: #45101A;
+  border: 1.5px solid #45101A;
+  border-radius: 9999px;
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.appointment-another-btn:hover {
+  background-color: #45101A;
+  color: #FAF7F0;
+  box-shadow: 0 4px 14px rgba(69, 16, 26, 0.2);
+}
+
+/* --------------------------------------------------------------------------
+   REDUCED MOTION ACCESSIBILITY
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .appointment-header,
+  .appointment-form-card,
+  .appointment-success-state {
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

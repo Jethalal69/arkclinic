@@ -1,0 +1,103 @@
+.service-highlights-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 14px;
+  margin-top: 22px;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .service-highlights-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 16px;
+  }
+}
+
+.highlight-pill {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 14px;
+  background-color: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 1px 4px rgba(45, 20, 24, 0.02);
+  transition: all 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  transform: translateY(12px);
+  will-change: transform, opacity;
+}
+
+.highlights-visible .highlight-pill {
+  animation: pillFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: var(--stagger-delay, 400ms);
+}
+
+@keyframes pillFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.highlight-pill:hover {
+  background-color: #FFFFFF;
+  border-color: rgba(182, 134, 54, 0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(182, 134, 54, 0.12), 0 2px 6px rgba(45, 20, 24, 0.03);
+}
+
+.highlight-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--bg-burgundy-soft);
+  color: var(--color-burgundy);
+  flex-shrink: 0;
+  transition: all 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.highlight-icon-svg {
+  transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.highlight-pill:hover .highlight-icon-box {
+  background-color: var(--color-burgundy);
+  color: #FFFFFF;
+  transform: scale(1.08);
+}
+
+.highlight-pill:hover .highlight-icon-svg {
+  transform: scale(1.1) rotate(4deg);
+}
+
+.highlight-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  transition: color 200ms ease;
+}
+
+.highlight-pill:hover .highlight-label {
+  color: var(--color-burgundy);
+}
+
+@media (max-width: 480px) {
+  .highlight-pill {
+    padding: 6px 10px;
+    gap: 7px;
+  }
+  .highlight-label {
+    font-size: 0.78rem;
+  }
+}

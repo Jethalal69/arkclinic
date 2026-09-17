@@ -1,0 +1,588 @@
+/* ==========================================================================
+   ARK CLINIC - HERO SECTION STYLES
+   High-end editorial healthcare composition over biotech background video
+   ========================================================================== */
+
+.hero-section {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  height: 100vh;
+  min-height: 680px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Background Biotech / DNA Loop Video */
+.hero-video-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Subtle Optical Readability Gradient Overlay (Seamless, Non-Boxy, DNA luminous) */
+.hero-vignette-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 75% 65% at 50% 48%,
+    rgba(4, 7, 20, 0.42) 0%,
+    rgba(4, 7, 20, 0.20) 52%,
+    rgba(4, 7, 20, 0.68) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Main Centered Hero Content Container */
+.hero-content-wrapper {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 76px; /* Optical vertical centering accounting for top navbar */
+  padding-bottom: 28px;
+}
+
+.hero-content-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* --------------------------------------------------------------------------
+   1. Eyebrow: Small, Understated, Uppercase
+   -------------------------------------------------------------------------- */
+.hero-eyebrow-wrap {
+  margin-bottom: 12px;
+  animation: heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s backwards;
+}
+
+.hero-eyebrow {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+  display: inline-block;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   2. Main Headline: Editorial Display Serif (Visual Focal Point)
+   -------------------------------------------------------------------------- */
+.hero-headline {
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-size: clamp(2.95rem, 5.2vw, 4.75rem);
+  font-weight: 500;
+  line-height: 1.06;
+  letter-spacing: -0.015em;
+  color: #FFFFFF;
+  margin: 0 0 18px 0;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.55);
+  animation: heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
+}
+
+.hero-headline-line1,
+.hero-headline-line2 {
+  display: block;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.98);
+}
+
+.hero-headline-line3 {
+  display: inline-block;
+  font-style: italic;
+  font-weight: 400;
+  color: #C8D8FA;
+  background: linear-gradient(135deg, #E6F0FD 0%, #D0C2FA 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   3. Supporting Description: Refined, Clear, Airy
+   -------------------------------------------------------------------------- */
+.hero-description {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: clamp(0.95rem, 1.15vw, 1.05rem);
+  font-weight: 350;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 580px;
+  margin: 0 auto 36px auto; /* Slightly more breathing room to CTA buttons */
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
+  animation: heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.34s backwards;
+}
+
+/* --------------------------------------------------------------------------
+   4. CTA Buttons: Clear Hierarchy (Solid Primary vs Frosted Glass Secondary)
+   -------------------------------------------------------------------------- */
+.hero-cta-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 44px; /* Slightly more breathing room to Statistics */
+  animation: heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.48s backwards;
+}
+
+/* Primary CTA Button: Warm Off-White Solid */
+.hero-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 28px;
+  background-color: #FAF7F0;
+  color: #121620;
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: 9999px;
+  border: none;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.28);
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.hero-btn-primary:hover {
+  background-color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(255, 255, 255, 0.25), 0 3px 12px rgba(0, 0, 0, 0.35);
+}
+
+.hero-btn-primary:active {
+  transform: translateY(0);
+}
+
+.hero-btn-arrow {
+  display: inline-block;
+  font-size: 0.95rem;
+  transition: transform 200ms ease;
+}
+
+.hero-btn-primary:hover .hero-btn-arrow {
+  transform: translateX(3px);
+}
+
+/* Secondary CTA Button: Refined Frosted Glass */
+.hero-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 46px;
+  padding: 0 26px;
+  background-color: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.92);
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              color 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.hero-btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.55);
+  color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+}
+
+.hero-btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   5. Trust Information Horizontal Row: Optically Aligned & Spacious
+   -------------------------------------------------------------------------- */
+.hero-trust-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  padding: 0 16px;
+  animation: heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.62s backwards;
+}
+
+.trust-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 6px;
+}
+
+.trust-stat {
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #FAF5EB;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+}
+
+.trust-stat-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.trust-label {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.74rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.trust-divider {
+  width: 1px;
+  height: 30px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(255, 255, 255, 0.18),
+    transparent
+  );
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   6. Subtle Scroll Indicator
+   -------------------------------------------------------------------------- */
+.hero-scroll-indicator {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  text-decoration: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.45);
+  transition: color 200ms ease, opacity 200ms ease;
+  animation: heroScrollFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.75s backwards;
+  user-select: none;
+  width: max-content;
+}
+
+.hero-scroll-indicator:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.scroll-indicator-text {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.scroll-indicator-arrow {
+  font-size: 0.82rem;
+  line-height: 1;
+  animation: scrollBounce 2.2s ease-in-out infinite;
+}
+
+@keyframes scrollBounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(3px);
+  }
+  60% {
+    transform: translateY(1.5px);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Keyframes: Fast, Subtle, Premium Stagger Entrance
+   -------------------------------------------------------------------------- */
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroScrollFadeUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 16px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .hero-headline {
+    font-size: clamp(2.6rem, 5vw, 3.8rem);
+  }
+
+  .hero-description {
+    margin-bottom: 30px;
+  }
+
+  .hero-cta-group {
+    margin-bottom: 38px;
+  }
+
+  .hero-trust-row {
+    gap: 36px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    min-height: 100svh;
+    height: auto;
+    padding: 84px 0 36px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Subtle mobile optical overlay to ensure high contrast while keeping DNA luminous */
+  .hero-vignette-overlay {
+    background: radial-gradient(
+      ellipse 85% 75% at 50% 45%,
+      rgba(4, 7, 20, 0.48) 0%,
+      rgba(4, 7, 20, 0.25) 50%,
+      rgba(4, 7, 20, 0.75) 100%
+    );
+  }
+
+  .hero-content-wrapper {
+    padding-top: 12px;
+    padding-bottom: 48px; /* Safe clearance above scroll indicator */
+    height: auto;
+  }
+
+  .hero-content-inner {
+    padding: 0 16px;
+    max-width: 460px;
+  }
+
+  /* 1. Mobile Eyebrow */
+  .hero-eyebrow-wrap {
+    margin-bottom: 14px;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+  }
+
+  /* 2. Mobile Headline: Increased size for primary visual focus */
+  .hero-headline {
+    font-size: clamp(2.35rem, 7.8vw, 3.1rem);
+    line-height: 1.08;
+    margin-bottom: 18px;
+  }
+
+  /* 3. Mobile Supporting Text: Slightly increased size, controlled max-width, clean line-height */
+  .hero-description {
+    font-size: clamp(0.96rem, 2.8vw, 1.04rem);
+    font-weight: 350;
+    line-height: 1.62;
+    color: rgba(255, 255, 255, 0.86);
+    max-width: 380px;
+    margin: 0 auto 30px auto;
+  }
+
+  /* 4. Mobile CTA Group: Vertically stacked with 48px touch targets */
+  .hero-cta-group {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto 34px auto;
+  }
+
+  .hero-btn-primary,
+  .hero-btn-secondary {
+    width: 100%;
+    height: 48px;
+    font-size: 0.9rem;
+  }
+
+  /* 5. Mobile Trust Statistics: Horizontally organized, balanced & aligned */
+  .hero-trust-row {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+    padding: 0 4px;
+  }
+
+  .trust-item {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    gap: 4px;
+  }
+
+  .trust-stat {
+    font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+    font-size: clamp(1.35rem, 3.8vw, 1.55rem);
+    font-weight: 600;
+    color: #FAF5EB;
+    line-height: 1.1;
+    height: auto;
+    min-height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .trust-stat-text {
+    font-size: clamp(0.92rem, 2.5vw, 1.05rem);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+  }
+
+  .trust-label {
+    font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+    font-size: clamp(0.66rem, 1.9vw, 0.72rem);
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.68);
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+    white-space: normal;
+    word-break: normal;
+  }
+
+  .trust-divider {
+    width: 1px;
+    height: 32px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(255, 255, 255, 0.18),
+      transparent
+    );
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  /* 6. Scroll Indicator on Mobile: Centered, visible & never overlapping stats */
+  .hero-scroll-indicator {
+    display: flex;
+    bottom: 12px;
+  }
+
+  .scroll-indicator-text {
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+  }
+
+  .scroll-indicator-arrow {
+    font-size: 0.74rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-headline {
+    font-size: clamp(2.15rem, 8.4vw, 2.65rem);
+  }
+
+  .hero-trust-row {
+    gap: 8px;
+  }
+
+  .trust-label {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .hero-headline {
+    font-size: clamp(1.95rem, 8.8vw, 2.25rem);
+  }
+
+  .hero-description {
+    font-size: 0.92rem;
+  }
+
+  .trust-stat {
+    font-size: 1.25rem;
+  }
+
+  .trust-stat-text {
+    font-size: 0.88rem;
+  }
+
+  .trust-label {
+    font-size: 0.62rem;
+  }
+}
+

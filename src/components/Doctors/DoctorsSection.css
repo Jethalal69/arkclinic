@@ -1,0 +1,681 @@
+/* ==========================================================================
+   ARK CLINIC - DOCTORS SECTION STYLES (REFINED UI POLISH PASS)
+   Liquid Glass Cards on Dark Atmospheric Navy/Violet Background
+   Exact Uploaded Background Image: /images/doctors-bg.jpg (Strictly unaltered)
+   ========================================================================== */
+
+.doctors-section {
+  position: relative;
+  width: 100%;
+  padding-top: 80px;
+  padding-bottom: 104px;
+  background-color: #060813;
+  background-image: url('/images/doctors-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .doctors-section {
+    padding-top: 92px;
+    padding-bottom: 116px;
+  }
+}
+
+.doctors-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .doctors-container {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .doctors-container {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   SECTION HEADER (Centered, Refined Editorial Typography)
+   -------------------------------------------------------------------------- */
+.doctors-header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 44px;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+@media (min-width: 1024px) {
+  .doctors-header {
+    margin-bottom: 52px;
+  }
+}
+
+.doctors-visible .doctors-header {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.doctors-eyebrow-wrap {
+  margin-bottom: 10px;
+}
+
+.doctors-eyebrow {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #D4AF37;
+  display: inline-block;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+}
+
+.doctors-heading {
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-size: clamp(2rem, 3.2vw, 2.85rem);
+  font-weight: 500;
+  color: #FFFFFF;
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  margin-bottom: 14px;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
+}
+
+.doctors-description {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.96rem;
+  font-weight: 300;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 580px;
+  margin: 0 auto;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* --------------------------------------------------------------------------
+   DOCTORS GRID (3 Equal-Width Cards Desktop Layout)
+   -------------------------------------------------------------------------- */
+.doctors-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  width: 100%;
+  align-items: stretch;
+}
+
+@media (max-width: 1024px) {
+  .doctors-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 720px) {
+  .doctors-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   LIQUID GLASS DOCTOR CARD
+   -------------------------------------------------------------------------- */
+.doctor-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: rgba(13, 20, 40, 0.52);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 18px;
+  box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.45),
+              inset 0 1px 1px rgba(255, 255, 255, 0.12);
+  padding: 20px;
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.35s ease,
+              box-shadow 0.35s ease,
+              background 0.35s ease;
+  transition-delay: var(--card-delay, 0ms), 0ms, 0ms, 0ms, 0ms;
+}
+
+.doctors-visible .doctor-card {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.doctor-card:hover {
+  transform: translateY(-4px);
+  background: rgba(17, 26, 52, 0.62);
+  border-color: rgba(212, 175, 55, 0.32);
+  box-shadow: 0 22px 48px -10px rgba(0, 0, 0, 0.62),
+              inset 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+.doctor-card-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex-grow: 1;
+}
+
+/* --------------------------------------------------------------------------
+   DOCTOR PHOTO AREA (Compact, Balanced, Real Photo Ready Container)
+   -------------------------------------------------------------------------- */
+.doctor-photo-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  background: rgba(8, 14, 30, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+/* Support for future real doctor photo <img> */
+.doctor-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  border-radius: inherit;
+}
+
+.doctor-photo-placeholder {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 38%, rgba(212, 175, 55, 0.08) 0%, rgba(22, 34, 66, 0.38) 52%, rgba(6, 10, 22, 0.72) 100%);
+}
+
+.photo-placeholder-ambient {
+  position: absolute;
+  top: 15%;
+  left: 20%;
+  right: 20%;
+  bottom: 25%;
+  background: radial-gradient(circle, rgba(100, 130, 220, 0.14) 0%, transparent 70%);
+  filter: blur(10px);
+  pointer-events: none;
+  animation: ambientBreath 4s ease-in-out infinite;
+}
+
+@keyframes ambientBreath {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.95;
+  }
+}
+
+.photo-placeholder-icon-wrap {
+  position: relative;
+  z-index: 2;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.32), inset 0 1px 1px rgba(255, 255, 255, 0.14);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.35s ease,
+              box-shadow 0.35s ease;
+}
+
+.doctor-card:hover .photo-placeholder-icon-wrap {
+  transform: scale(1.06);
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow: 0 10px 24px rgba(212, 175, 55, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.22);
+}
+
+.photo-placeholder-icon {
+  color: #D4AF37;
+  opacity: 0.88;
+}
+
+/* --------------------------------------------------------------------------
+   EXPERIENCE BADGE (Clean, Consistent, Properly Aligned Overlay)
+   -------------------------------------------------------------------------- */
+.doctor-experience-tag {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: rgba(8, 13, 28, 0.86);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(212, 175, 55, 0.32);
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #E6CA78;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.exp-tag-icon {
+  color: #D4AF37;
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   DOCTOR DETAILS BODY
+   -------------------------------------------------------------------------- */
+.doctor-details-body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* Doctor Name & Primary Meta */
+.doctor-primary-info {
+  margin-bottom: 16px;
+}
+
+.doctor-name {
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  line-height: 1.26;
+  margin-bottom: 5px;
+  letter-spacing: -0.01em;
+}
+
+.doctor-meta-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.doctor-qualifications {
+  font-weight: 600;
+  color: #D4AF37;
+  letter-spacing: 0.01em;
+}
+
+.doctor-meta-dot {
+  color: rgba(255, 255, 255, 0.28);
+  font-size: 0.7rem;
+}
+
+.doctor-role {
+  color: rgba(255, 255, 255, 0.74);
+  font-weight: 400;
+}
+
+/* Professional Background Block */
+.doctor-background-block {
+  margin-bottom: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.background-section-title {
+  display: block;
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.44);
+  margin-bottom: 10px;
+}
+
+.hospitals-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+}
+
+.hospital-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.815rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.38;
+}
+
+.hospital-item-icon {
+  color: #D4AF37;
+  opacity: 0.75;
+  flex-shrink: 0;
+  margin-top: 2.5px;
+}
+
+.hospital-item-text {
+  flex-grow: 1;
+}
+
+/* --------------------------------------------------------------------------
+   CARD FOOTER / "VIEW PROFILE →" CTA (Horizontally Baseline Aligned)
+   -------------------------------------------------------------------------- */
+.doctor-card-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+}
+
+.doctor-cta-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  padding: 4px 0;
+  min-height: 32px;
+  transition: color 0.25s ease, gap 0.25s ease;
+  text-decoration: none;
+}
+
+.doctor-cta-text {
+  transition: color 0.25s ease;
+}
+
+.doctor-cta-arrow {
+  color: #D4AF37;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.25s ease;
+}
+
+.doctor-card:hover .doctor-cta-link,
+.doctor-cta-link:hover {
+  color: #E6CA78;
+  gap: 9px;
+}
+
+.doctor-card:hover .doctor-cta-arrow,
+.doctor-cta-link:hover .doctor-cta-arrow {
+  transform: translateX(4px);
+  color: #F0DA8F;
+}
+
+/* --------------------------------------------------------------------------
+   MOBILE & RESPONSIVE BREAKPOINTS (320px, 360px, 375px, 390px, 414px, 768px)
+   (Desktop layout and rules above remain strictly protected)
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .doctors-section {
+    padding-top: 52px;
+    padding-bottom: 68px;
+  }
+
+  .doctors-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .doctors-header {
+    margin-bottom: 30px;
+  }
+
+  .doctors-eyebrow-wrap {
+    margin-bottom: 8px;
+  }
+
+  .doctors-eyebrow {
+    font-size: 0.70rem;
+    letter-spacing: 0.18em;
+  }
+
+  .doctors-heading {
+    font-size: 1.85rem;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+
+  .doctors-description {
+    font-size: 0.90rem;
+    line-height: 1.58;
+  }
+
+  .doctors-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    max-width: 440px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .doctor-card {
+    padding: 16px;
+    border-radius: 16px;
+    box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.45),
+                inset 0 1px 1px rgba(255, 255, 255, 0.12);
+  }
+
+  /* Compact portrait-ready photo frame for mobile */
+  .doctor-photo-frame {
+    aspect-ratio: 16 / 8.8;
+    min-height: 130px;
+    border-radius: 11px;
+    margin-bottom: 14px;
+  }
+
+  .photo-placeholder-icon-wrap {
+    width: 44px;
+    height: 44px;
+  }
+
+  .photo-placeholder-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Experience Badge on Mobile */
+  .doctor-experience-tag {
+    bottom: 8px;
+    left: 8px;
+    padding: 3.5px 9px;
+    font-size: 0.70rem;
+    gap: 4.5px;
+    border-radius: 9999px;
+  }
+
+  .exp-tag-icon {
+    width: 11px;
+    height: 11px;
+  }
+
+  /* Doctor Information Mobile Typography */
+  .doctor-primary-info {
+    margin-bottom: 13px;
+  }
+
+  .doctor-name {
+    font-size: 1.18rem;
+    line-height: 1.24;
+    margin-bottom: 4px;
+  }
+
+  .doctor-meta-line {
+    font-size: 0.79rem;
+    line-height: 1.38;
+    gap: 5px;
+  }
+
+  .doctor-qualifications {
+    font-size: 0.79rem;
+    font-weight: 600;
+  }
+
+  .doctor-meta-dot {
+    font-size: 0.68rem;
+  }
+
+  .doctor-role {
+    font-size: 0.79rem;
+  }
+
+  /* Professional Background on Mobile */
+  .doctor-background-block {
+    margin-bottom: 14px;
+    padding-top: 12px;
+  }
+
+  .background-section-title {
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+
+  .hospitals-list {
+    gap: 6px;
+  }
+
+  .hospital-item {
+    font-size: 0.81rem;
+    line-height: 1.36;
+    gap: 7.5px;
+    align-items: flex-start;
+  }
+
+  .hospital-item-icon {
+    width: 12px;
+    height: 12px;
+    margin-top: 2px;
+  }
+
+  .hospital-item-text {
+    word-break: break-word;
+  }
+
+  /* CTA on Mobile */
+  .doctor-card-footer {
+    padding-top: 12px;
+  }
+
+  .doctor-cta-link {
+    font-size: 0.82rem;
+    min-height: 36px;
+    padding: 4px 0;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 375px) {
+  .doctors-container {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .doctor-card {
+    padding: 15px;
+  }
+
+  .doctor-name {
+    font-size: 1.12rem;
+  }
+
+  .doctor-meta-line {
+    font-size: 0.76rem;
+    gap: 4px;
+  }
+
+  .doctor-qualifications {
+    font-size: 0.76rem;
+  }
+
+  .doctor-role {
+    font-size: 0.76rem;
+  }
+
+  .doctor-experience-tag {
+    font-size: 0.67rem;
+    padding: 3px 8px;
+    bottom: 7px;
+    left: 7px;
+  }
+
+  .hospital-item {
+    font-size: 0.78rem;
+    gap: 7px;
+  }
+}
+
+@media (max-width: 320px) {
+  .doctors-container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .doctor-card {
+    padding: 13px;
+  }
+
+  .doctor-photo-frame {
+    aspect-ratio: 16 / 8.8;
+    min-height: 120px;
+    margin-bottom: 12px;
+  }
+
+  .doctor-name {
+    font-size: 1.05rem;
+  }
+
+  .doctor-experience-tag {
+    font-size: 0.64rem;
+    padding: 2.5px 7px;
+  }
+}
+
