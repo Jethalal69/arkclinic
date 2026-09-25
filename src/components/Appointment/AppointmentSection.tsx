@@ -17,6 +17,8 @@ import {
   Mail,
   FileText,
   X,
+  AlertCircle,
+  Loader2,
 } from 'lucide-react';
 import './AppointmentSection.css';
 
@@ -47,6 +49,7 @@ export const AppointmentSection: FC = () => {
 
   // UI State
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [confirmationCode, setConfirmationCode] = useState<string>('');
@@ -225,21 +228,102 @@ export const AppointmentSection: FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const formatTimeTo24Hour = (timeStr: string): string => {
+    if (!timeStr) return '';
+    const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if (match) {
+      let hours = parseInt(match[1], 10);
+      const minutes = match[2];
+      const period = match[3].toUpperCase();
+      if (period === 'AM') {
+        if (hours === 12) hours = 0;
+      } else if (period === 'PM') {
+        if (hours !== 12) hours += 12;
+      }
+      return `${hours.toString().padStart(2, '0')}:${minutes}`;
+    }
+    if (/^\d{1,2}:\d{2}$/.test(timeStr.trim())) {
+      const [h, m] = timeStr.trim().split(':');
+      return `${h.padStart(2, '0')}:${m}`;
+    }
+    return timeStr.trim();
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
+
     if (!validateForm()) {
       return;
     }
 
     setIsSubmitting(true);
 
-    // Simulate verified form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
-      const code = 'ARK-' + Math.floor(100000 + Math.random() * 900000);
+    const appointmentType = consultationMode === 'online-video' ? 'video' : 'in_person';
+    const formattedTime = formatTimeTo24Hour(preferredTime);
+
+    let formattedMessage = reason.trim();
+    if (consultationMode === 'home-visit' && address.trim()) {
+      formattedMessage = formattedMessage
+        ? `Home Visit Address: ${address.trim()}\nNotes: ${formattedMessage}`
+        : `Home Visit Address: ${address.trim()}`;
+    }
+
+    const payload = {
+      name: fullName.trim(),
+      phone: phoneNumber.trim(),
+      email: email.trim(),
+      doctor: physician,
+      appointment_type: appointmentType,
+      date: preferredDate,
+      time: formattedTime,
+      message: formattedMessage || '',
+    };
+
+    try {
+      const response = await fetch('https://taranjeet09.app.n8n.cloud/webhook/clinic-appointment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server returned error status (${response.status}). Please try again.`);
+      }
+
+      let code = 'ARK-' + Math.floor(100000 + Math.random() * 900000);
+      try {
+        const data = await response.json();
+        if (data && typeof data === 'object') {
+          const potentialCode =
+            data.referenceId ||
+            data.confirmationCode ||
+            data.id ||
+            data.bookingId ||
+            data.reference_id ||
+            data.code;
+          if (potentialCode && typeof potentialCode === 'string') {
+            code = potentialCode;
+          }
+        }
+      } catch {
+        // Plain text or empty response on 200 OK
+      }
+
       setConfirmationCode(code);
       setIsSuccess(true);
-    }, 600);
+    } catch (error: any) {
+      console.error('Failed to submit appointment to webhook:', error);
+      setSubmitError(
+        error.message && typeof error.message === 'string' && !error.message.includes('Failed to fetch')
+          ? error.message
+          : 'Unable to process your appointment request at this moment. Please check your internet connection and try again.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
@@ -254,6 +338,7 @@ export const AppointmentSection: FC = () => {
     setReason('');
     setMedicalFile(null);
     setErrors({});
+    setSubmitError(null);
     setIsSuccess(false);
   };
 
@@ -662,13 +747,29 @@ export const AppointmentSection: FC = () => {
 
                 {/* CONFIRM APPOINTMENT CTA & PRIVACY REASSURANCE */}
                 <div className="form-submit-footer">
+                  {submitError && (
+                    <div className="appointment-error-alert" role="alert">
+                      <AlertCircle size={18} className="error-alert-icon" />
+                      <span>{submitError}</span>
+                    </div>
+                  )}
+
                   <button
                     type="submit"
                     disabled={isSubmitting}
                     className="appointment-submit-btn"
                   >
-                    <span>{isSubmitting ? 'Confirming Appointment...' : 'Confirm Appointment'}</span>
-                    <ArrowRight size={16} className="submit-arrow" />
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 size={16} className="submit-spinner" />
+                        <span>Confirming Appointment...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Confirm Appointment</span>
+                        <ArrowRight size={16} className="submit-arrow" />
+                      </>
+                    )}
                   </button>
                   <p className="form-security-reassurance">
                     <Lock size={13} className="security-lock-icon" aria-hidden="true" />
@@ -678,7 +779,7 @@ export const AppointmentSection: FC = () => {
               </form>
             </>
           ) : (
-            /* Polished Prototype Confirmation State */
+            /* Polished Confirmation State */
             <div className="appointment-success-state" role="status">
               <div className="success-icon-badge" aria-hidden="true">
                 <CheckCircle2 size={36} />
@@ -724,10 +825,6 @@ export const AppointmentSection: FC = () => {
                   <span className="summary-value">{preferredTime}</span>
                 </div>
               </div>
-
-              <p className="demo-notice-text">
-                Demo Prototype • No real medical records or external appointments have been created.
-              </p>
 
               <button
                 type="button"

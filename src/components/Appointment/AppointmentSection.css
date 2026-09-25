@@ -639,9 +639,46 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   padding-top: 22px;
   border-top: 1px solid rgba(182, 134, 54, 0.18);
+}
+
+.appointment-error-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 480px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  background-color: rgba(254, 242, 242, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #B91C1C;
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: left;
+  animation: fadeInError 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.appointment-error-alert .error-alert-icon {
+  flex-shrink: 0;
+  color: #DC2626;
+}
+
+@keyframes fadeInError {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .appointment-submit-btn {
@@ -685,7 +722,7 @@
 }
 
 .appointment-submit-btn:disabled {
-  opacity: 0.7;
+  opacity: 0.75;
   cursor: not-allowed;
 }
 
@@ -695,6 +732,19 @@
 
 .appointment-submit-btn:hover:not(:disabled) .submit-arrow {
   transform: translateX(4px);
+}
+
+.submit-spinner {
+  animation: spinLoader 1s linear infinite;
+}
+
+@keyframes spinLoader {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .form-security-reassurance {
