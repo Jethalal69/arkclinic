@@ -59,6 +59,7 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome }) => {
   const [cancelModalAppointment, setCancelModalAppointment] = useState<Appointment | null>(null);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState<boolean>(false);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
 
   // Toast Notification
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
@@ -190,7 +191,7 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome }) => {
 
   // Status Change Handlers
   const handleConfirmAppointment = async (appointmentId: string) => {
-    if (confirmingId || isUpdatingStatus) return;
+    if (confirmingId || cancellingId || isUpdatingStatus) return;
 
     setConfirmingId(appointmentId);
     setIsUpdatingStatus(true);
@@ -259,9 +260,77 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome }) => {
     }
   };
 
+  const handleCancelAppointment = async (appointmentId: string) => {
+    if (cancellingId || confirmingId || isUpdatingStatus) return;
+
+    setCancellingId(appointmentId);
+    setIsUpdatingStatus(true);
+
+    try {
+      const response = await fetch(
+        'https://taranjeet09.app.n8n.cloud/webhook/admin-cancel-appointment',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: appointmentId,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        let errorMessage = `Failed to cancel appointment (Status: ${response.status})`;
+        try {
+          const errorData = await response.json();
+          if (errorData && typeof errorData === 'object') {
+            const detail = errorData.message || errorData.error || errorData.details;
+            if (detail && typeof detail === 'string') {
+              errorMessage = detail;
+            }
+          }
+        } catch {
+          // Response is not JSON
+        }
+        throw new Error(errorMessage);
+      }
+
+      // Close cancel confirmation modal on success
+      setCancelModalAppointment(null);
+
+      showToast('Appointment cancelled successfully!', 'success');
+
+      // Refresh appointments from Supabase to sync the new cancelled status
+      const { data, error } = await fetchAppointments();
+      if (!error && data) {
+        setAppointments(data);
+        if (selectedAppointment && selectedAppointment.id === appointmentId) {
+          const updated = data.find((a) => a.id === appointmentId);
+          if (updated) {
+            setSelectedAppointment(updated);
+          }
+        }
+      }
+    } catch (error: any) {
+      console.error('Failed to cancel appointment via webhook:', error);
+      const msg =
+        error?.message && typeof error.message === 'string' && !error.message.includes('Failed to fetch')
+          ? error.message
+          : 'Failed to cancel appointment. Please check your connection and try again.';
+      showToast(msg, 'error');
+    } finally {
+      setCancellingId(null);
+      setIsUpdatingStatus(false);
+    }
+  };
+
   const handleStatusChange = async (appointmentId: string, newStatus: AppointmentStatus) => {
     if (newStatus === 'confirmed') {
       return handleConfirmAppointment(appointmentId);
+    }
+    if (newStatus === 'cancelled') {
+      return handleCancelAppointment(appointmentId);
     }
 
     setIsUpdatingStatus(true);
@@ -285,8 +354,7 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome }) => {
 
   const handleConfirmCancel = async () => {
     if (!cancelModalAppointment) return;
-    await handleStatusChange(cancelModalAppointment.id, 'cancelled');
-    setCancelModalAppointment(null);
+    await handleCancelAppointment(cancelModalAppointment.id);
   };
 
   const handleCopyMeetingLink = (link: string) => {
