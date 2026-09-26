@@ -281,7 +281,7 @@ export const AppointmentSection: FC = () => {
     };
 
     try {
-      const response = await fetch('https://taranjeet09.app.n8n.cloud/webhook/clinic-appointment', {
+      const response = await fetch('https://taranjeet09.app.n8n.cloud/webhook/8913a5d7-22ab-4384-b00a-cb00902e01ae', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

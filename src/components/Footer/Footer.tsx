@@ -56,7 +56,11 @@ const WhatsAppIcon: FC<{ size?: number; className?: string }> = ({ size = 18, cl
   </svg>
 );
 
-export const Footer: FC = () => {
+interface FooterProps {
+  onNavigateAdmin?: () => void;
+}
+
+export const Footer: FC<FooterProps> = ({ onNavigateAdmin }) => {
   const [isVisible, setIsVisible] = useState(false);
   const footerRef = useRef<HTMLElement>(null);
   const [email, setEmail] = useState('');
@@ -317,6 +321,22 @@ export const Footer: FC = () => {
               <span className="footer-legal-dot" aria-hidden="true">•</span>
               <a href="#terms" onClick={(e) => e.preventDefault()} className="footer-legal-link">
                 Terms of Service
+              </a>
+              <span className="footer-legal-dot" aria-hidden="true">•</span>
+              <a
+                href="/admin"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (onNavigateAdmin) {
+                    onNavigateAdmin();
+                  } else {
+                    window.history.pushState(null, '', '/admin');
+                    window.dispatchEvent(new PopStateEvent('popstate'));
+                  }
+                }}
+                className="footer-legal-link footer-admin-link"
+              >
+                Admin Portal
               </a>
             </div>
           </div>

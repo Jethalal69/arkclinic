@@ -469,6 +469,15 @@
   color: #E6CA78;
 }
 
+.footer-admin-link {
+  color: rgba(212, 175, 55, 0.85);
+  font-weight: 500;
+}
+
+.footer-admin-link:hover {
+  color: #FFFFFF;
+}
+
 .footer-legal-dot {
   color: rgba(255, 255, 255, 0.25);
   font-size: 0.72rem;
