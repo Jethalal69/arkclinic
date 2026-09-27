@@ -1099,11 +1099,12 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
             aria-modal="true"
             aria-labelledby="modal-title"
           >
+            {/* Modal Header */}
             <div className="modal-header">
               <div className="modal-header-meta">
-                <span className="modal-pretitle">Appointment Details</span>
+                <span className="modal-pretitle">Clinical Appointment Record</span>
                 <h3 id="modal-title" className="modal-title">
-                  {selectedAppointment.patient_name}
+                  {selectedAppointment.patient_name || 'Patient Appointment'}
                 </h3>
               </div>
               <button
@@ -1111,17 +1112,18 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
                 className="modal-close-btn"
                 onClick={() => setSelectedAppointment(null)}
                 aria-label="Close dialog"
+                title="Close dialog"
               >
                 <X size={20} />
               </button>
             </div>
 
             <div className="modal-body">
-              {/* Status Banner */}
+              {/* Status Management Bar */}
               <div className="modal-status-bar">
                 <div className="status-label-group">
                   <span className="text-muted-sm">Current Status</span>
-                  <div>{getStatusBadge(selectedAppointment.status)}</div>
+                  <div className="modal-current-badge">{getStatusBadge(selectedAppointment.status)}</div>
                 </div>
 
                 <div className="status-actions-group">
@@ -1173,152 +1175,304 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
                 </div>
               </div>
 
-              {/* Video Consultation Box (if video) */}
-              {(selectedAppointment.appointment_type || '').toLowerCase().includes('video') && (
-                <div className="modal-video-card">
-                  <div className="video-card-header">
-                    <div className="video-card-title">
-                      <Video size={18} />
-                      <strong>Google Meet Video Consultation</strong>
+              {/* 1. Patient Information */}
+              <div className="modal-section">
+                <div className="modal-section-header">
+                  <div className="modal-section-icon">
+                    <User size={15} />
+                  </div>
+                  <h4 className="modal-section-title">Patient Information</h4>
+                </div>
+                <div className="modal-details-grid">
+                  <div className="detail-item">
+                    <div className="detail-icon-circle">
+                      <User size={14} />
                     </div>
-                    {selectedAppointment.meeting_link && (
-                      <button
-                        type="button"
-                        className="btn-copy-meet-sm"
-                        onClick={() => handleCopyMeetingLink(selectedAppointment.meeting_link!)}
-                      >
-                        <Copy size={13} />
-                        <span>{copiedLink ? 'Copied!' : 'Copy Link'}</span>
-                      </button>
-                    )}
-                  </div>
-
-                  {selectedAppointment.meeting_link ? (
-                    <div className="video-card-actions">
-                      <div className="meeting-url-display">
-                        <code>{selectedAppointment.meeting_link}</code>
-                      </div>
-                      <a
-                        href={selectedAppointment.meeting_link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="modal-btn-join"
-                      >
-                        <Video size={16} />
-                        <span>Join Google Meet Now</span>
-                        <ExternalLink size={14} />
-                      </a>
+                    <div className="detail-content">
+                      <span className="detail-label">Patient Name</span>
+                      <strong className="detail-value">{selectedAppointment.patient_name || '—'}</strong>
                     </div>
-                  ) : (
-                    <p className="no-link-warning">
-                      No Google Meet link has been generated yet for this appointment.
-                    </p>
-                  )}
-                </div>
-              )}
+                  </div>
 
-              {/* Information Grid */}
-              <div className="modal-details-grid">
-                <div className="detail-item">
-                  <div className="detail-icon-circle">
-                    <User size={16} />
+                  <div className="detail-item">
+                    <div className="detail-icon-circle">
+                      <Phone size={14} />
+                    </div>
+                    <div className="detail-content">
+                      <span className="detail-label">Phone Number</span>
+                      {selectedAppointment.phone ? (
+                        <a href={`tel:${selectedAppointment.phone}`} className="detail-link">
+                          {selectedAppointment.phone}
+                        </a>
+                      ) : (
+                        <span className="detail-value text-muted">—</span>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <span className="detail-label">Patient Name</span>
-                    <strong className="detail-value">{selectedAppointment.patient_name || '—'}</strong>
-                  </div>
-                </div>
 
-                <div className="detail-item">
-                  <div className="detail-icon-circle">
-                    <Phone size={16} />
-                  </div>
-                  <div>
-                    <span className="detail-label">Phone Number</span>
-                    {selectedAppointment.phone ? (
-                      <a href={`tel:${selectedAppointment.phone}`} className="detail-link">
-                        {selectedAppointment.phone}
-                      </a>
-                    ) : (
-                      <span className="detail-value">—</span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="detail-item">
-                  <div className="detail-icon-circle">
-                    <Mail size={16} />
-                  </div>
-                  <div>
-                    <span className="detail-label">Email Address</span>
-                    {selectedAppointment.email ? (
-                      <a href={`mailto:${selectedAppointment.email}`} className="detail-link">
-                        {selectedAppointment.email}
-                      </a>
-                    ) : (
-                      <span className="detail-value">—</span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="detail-item">
-                  <div className="detail-icon-circle">
-                    <Stethoscope size={16} />
-                  </div>
-                  <div>
-                    <span className="detail-label">Attending Doctor</span>
-                    <strong className="detail-value">{selectedAppointment.doctor || 'Any Doctor'}</strong>
-                  </div>
-                </div>
-
-                <div className="detail-item">
-                  <div className="detail-icon-circle">
-                    <Calendar size={16} />
-                  </div>
-                  <div>
-                    <span className="detail-label">Appointment Date</span>
-                    <strong className="detail-value">
-                      {formatDisplayDate(selectedAppointment.date)}
-                    </strong>
-                  </div>
-                </div>
-
-                <div className="detail-item">
-                  <div className="detail-icon-circle">
-                    <Clock size={16} />
-                  </div>
-                  <div>
-                    <span className="detail-label">Appointment Time</span>
-                    <strong className="detail-value">
-                      {formatDisplayTime(selectedAppointment.time)}
-                    </strong>
+                  <div className="detail-item detail-item-full">
+                    <div className="detail-icon-circle">
+                      <Mail size={14} />
+                    </div>
+                    <div className="detail-content">
+                      <span className="detail-label">Email Address</span>
+                      {selectedAppointment.email ? (
+                        <a href={`mailto:${selectedAppointment.email}`} className="detail-link">
+                          {selectedAppointment.email}
+                        </a>
+                      ) : (
+                        <span className="detail-value text-muted">—</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Message / Symptoms Notes */}
-              {selectedAppointment.message && (
-                <div className="modal-notes-section">
-                  <div className="notes-header">
-                    <FileText size={16} />
-                    <span>Patient Symptoms & Clinical Notes</span>
+              {/* 2. Appointment Information */}
+              <div className="modal-section">
+                <div className="modal-section-header">
+                  <div className="modal-section-icon">
+                    <CalendarDays size={15} />
                   </div>
-                  <div className="notes-content">{selectedAppointment.message}</div>
+                  <h4 className="modal-section-title">Appointment Information</h4>
                 </div>
-              )}
+                <div className="modal-details-grid">
+                  <div className="detail-item">
+                    <div className="detail-icon-circle">
+                      <Stethoscope size={14} />
+                    </div>
+                    <div className="detail-content">
+                      <span className="detail-label">Attending Doctor</span>
+                      <strong className="detail-value">{selectedAppointment.doctor || 'Any Available Doctor'}</strong>
+                    </div>
+                  </div>
 
-              {/* Meta information */}
-              <div className="modal-footer-meta">
-                <span>
-                  <strong>Appointment ID:</strong> {selectedAppointment.id}
-                </span>
-                <span>
-                  <strong>Submitted At:</strong>{' '}
-                  {new Date(selectedAppointment.created_at).toLocaleString()}
-                </span>
+                  <div className="detail-item">
+                    <div className="detail-icon-circle">
+                      <Building2 size={14} />
+                    </div>
+                    <div className="detail-content">
+                      <span className="detail-label">Appointment Type</span>
+                      <div className="detail-badge-wrap">{getTypeBadge(selectedAppointment.appointment_type)}</div>
+                    </div>
+                  </div>
+
+                  <div className="detail-item">
+                    <div className="detail-icon-circle">
+                      <Calendar size={14} />
+                    </div>
+                    <div className="detail-content">
+                      <span className="detail-label">Appointment Date</span>
+                      <strong className="detail-value">
+                        {formatDisplayDate(selectedAppointment.date)}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div className="detail-item">
+                    <div className="detail-icon-circle">
+                      <Clock size={14} />
+                    </div>
+                    <div className="detail-content">
+                      <span className="detail-label">Appointment Time</span>
+                      <strong className="detail-value">
+                        {formatDisplayTime(selectedAppointment.time)}
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Patient Symptoms / Clinical Notes if present */}
+                {selectedAppointment.message && (
+                  <div className="modal-notes-section">
+                    <div className="notes-header">
+                      <FileText size={14} />
+                      <span>Patient Symptoms & Clinical Notes</span>
+                    </div>
+                    <p className="notes-content">{selectedAppointment.message}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* 3. Consultation Information */}
+              <div className="modal-section">
+                <div className="modal-section-header">
+                  <div className="modal-section-icon">
+                    <Video size={15} />
+                  </div>
+                  <h4 className="modal-section-title">Consultation Information</h4>
+                </div>
+
+                {(() => {
+                  const isVideo = (selectedAppointment.appointment_type || '').toLowerCase().includes('video');
+                  const status = (selectedAppointment.status || '').toLowerCase();
+                  const isConfirmed = status === 'confirmed';
+                  const isPending = status === 'pending';
+                  const isCancelled = status === 'cancelled';
+
+                  // 1. If appointment status is cancelled, hide the entire Google Meet section
+                  if (isCancelled) {
+                    return (
+                      <div className="modal-consultation-card consult-cancelled-state">
+                        <div className="consult-card-header">
+                          <div className="consult-badge-icon cancel-icon-bg">
+                            <XCircle size={16} />
+                          </div>
+                          <div>
+                            <strong className="consult-headline">Appointment Cancelled</strong>
+                            <p className="consult-subtext">
+                              This appointment has been cancelled. No active consultation session is scheduled.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  // 2. For pending appointments (video or in-person): show Awaiting Confirmation
+                  if (isPending) {
+                    return (
+                      <div className="modal-consultation-card consult-pending-state">
+                        <div className="consult-card-header">
+                          <div className="consult-badge-icon pending-icon-bg">
+                            <Clock3 size={16} />
+                          </div>
+                          <div>
+                            <strong className="consult-headline">Awaiting Confirmation</strong>
+                            <p className="consult-subtext">
+                              This appointment is awaiting administrative confirmation. Consultation details and Google Meet link will be generated upon confirmation.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  // 3. For confirmed video appointments: show Google Meet section
+                  if (isVideo && isConfirmed) {
+                    return (
+                      <div className="modal-consultation-card consult-video-confirmed">
+                        <div className="consult-card-header">
+                          <div className="consult-header-left">
+                            <div className="consult-badge-icon video-icon-bg">
+                              <Video size={16} />
+                            </div>
+                            <div>
+                              <strong className="consult-headline">Google Meet Consultation</strong>
+                              <span className="consult-subtext">Online Teleconsultation session</span>
+                            </div>
+                          </div>
+                          {selectedAppointment.meeting_link && (
+                            <button
+                              type="button"
+                              className="btn-copy-meet-sm"
+                              onClick={() => handleCopyMeetingLink(selectedAppointment.meeting_link!)}
+                              title="Copy Google Meet Link"
+                            >
+                              <Copy size={13} />
+                              <span>{copiedLink ? 'Copied!' : 'Copy Link'}</span>
+                            </button>
+                          )}
+                        </div>
+
+                        {selectedAppointment.meeting_link ? (
+                          <div className="consult-video-actions">
+                            <div className="meeting-url-display">
+                              <code>{selectedAppointment.meeting_link}</code>
+                            </div>
+                            <div className="consult-btn-row">
+                              <a
+                                href={selectedAppointment.meeting_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="modal-btn-join"
+                              >
+                                <Video size={16} />
+                                <span>Join Google Meet</span>
+                                <ExternalLink size={14} />
+                              </a>
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="consult-no-link-warning">
+                            Google Meet link will be generated automatically via Google Calendar sync.
+                          </p>
+                        )}
+                      </div>
+                    );
+                  }
+
+                  // 4. For in-person appointments (confirmed or completed)
+                  if (!isVideo) {
+                    return (
+                      <div className="modal-consultation-card consult-in-person-state">
+                        <div className="consult-card-header">
+                          <div className="consult-badge-icon clinic-icon-bg">
+                            <Building2 size={16} />
+                          </div>
+                          <div>
+                            <strong className="consult-headline">In-Person Appointment</strong>
+                            <p className="consult-subtext">
+                              Clinical consultation at ARK Clinic, Safdarjung Enclave, New Delhi.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  // 5. Default Fallback
+                  return (
+                    <div className="modal-consultation-card consult-default-state">
+                      <div className="consult-card-header">
+                        <div className="consult-badge-icon clinic-icon-bg">
+                          <Stethoscope size={16} />
+                        </div>
+                        <div>
+                          <strong className="consult-headline">{selectedAppointment.appointment_type || 'Consultation'}</strong>
+                          <p className="consult-subtext">Standard clinical consultation</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* 4. System Information */}
+              <div className="modal-section modal-section-system">
+                <div className="modal-section-header">
+                  <div className="modal-section-icon">
+                    <Shield size={15} />
+                  </div>
+                  <h4 className="modal-section-title">System Information</h4>
+                </div>
+                <div className="modal-system-grid">
+                  <div className="system-item">
+                    <span className="system-label">Appointment ID</span>
+                    <code className="system-code-val">{selectedAppointment.id}</code>
+                  </div>
+                  <div className="system-item">
+                    <span className="system-label">Created Date & Time</span>
+                    <span className="system-val">
+                      {new Date(selectedAppointment.created_at).toLocaleString('en-US', {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      })}
+                    </span>
+                  </div>
+                  {((selectedAppointment as any).calendar_event_id || (selectedAppointment as any).event_id) && (
+                    <div className="system-item">
+                      <span className="system-label">Calendar Event ID</span>
+                      <code className="system-code-val">
+                        {(selectedAppointment as any).calendar_event_id || (selectedAppointment as any).event_id}
+                      </code>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
+            {/* Modal Footer */}
             <div className="modal-footer">
               <button
                 type="button"

@@ -1004,7 +1004,7 @@
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(42, 6, 14, 0.6);
+  background: rgba(30, 6, 11, 0.68);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   z-index: 999;
@@ -1012,40 +1012,34 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  animation: fadeIn 0.2s ease-out;
 }
 
 .modal-card {
   background: #FFFFFF;
   border-radius: 20px;
   border: 1px solid #ECE4D6;
-  box-shadow: 0 24px 60px -12px rgba(45, 10, 18, 0.3);
+  box-shadow: 0 24px 60px -12px rgba(45, 10, 18, 0.35);
   width: 100%;
-  max-width: 640px;
+  max-width: 660px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  animation: modalScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes modalScaleUp {
-  from { opacity: 0; transform: scale(0.95) translateY(10px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .modal-header {
-  padding: 22px 28px;
+  padding: 20px 26px;
   background: #FAF6EF;
   border-bottom: 1px solid #EBE1D2;
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.modal-header-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .modal-pretitle {
@@ -1055,7 +1049,6 @@
   letter-spacing: 1px;
   color: #8C6219;
   display: block;
-  margin-bottom: 4px;
 }
 
 .modal-title {
@@ -1064,6 +1057,7 @@
   font-weight: 700;
   color: #45101A;
   margin: 0;
+  line-height: 1.25;
 }
 
 .modal-close-btn {
@@ -1071,6 +1065,9 @@
   padding: 6px;
   border-radius: 8px;
   transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-close-btn:hover {
@@ -1079,11 +1076,11 @@
 }
 
 .modal-body {
-  padding: 24px 28px;
+  padding: 22px 26px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 /* Modal Status bar */
@@ -1091,30 +1088,37 @@
   background: #FAF8F5;
   border: 1px solid #ECE4D6;
   border-radius: 12px;
-  padding: 16px;
+  padding: 14px 16px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
 }
 
 .status-label-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
+}
+
+.modal-current-badge {
+  display: flex;
+  align-items: center;
 }
 
 .text-muted-sm {
-  font-size: 12px;
+  font-size: 11px;
   color: #76716B;
-  font-weight: 600;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .status-actions-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .status-quick-buttons {
@@ -1132,6 +1136,7 @@
   border: 1px solid #DFD5C4;
   color: #48443F;
   transition: all 0.15s ease;
+  cursor: pointer;
 }
 
 .btn-pill-status:hover:not(:disabled) {
@@ -1163,108 +1168,29 @@
   border-color: #EF4444;
 }
 
-/* Modal Video Box */
-.modal-video-card {
-  background: linear-gradient(135deg, #FAF5FF 0%, #F5F3FF 100%);
-  border: 1px solid #DDD6FE;
-  border-radius: 12px;
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.video-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.video-card-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #5B21B6;
-  font-size: 14px;
-}
-
-.btn-copy-meet-sm {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 6px;
-  background: #FFFFFF;
-  border: 1px solid #DDD6FE;
-  color: #5B21B6;
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.video-card-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.meeting-url-display {
-  background: #FFFFFF;
-  border: 1px dashed #C4B5FD;
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 13px;
-  color: #4C1D95;
-  word-break: break-all;
-}
-
-.modal-btn-join {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 18px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #1E8E3E 0%, #137333 100%);
-  color: #FFFFFF;
-  font-weight: 700;
-  font-size: 14px;
-  box-shadow: 0 4px 14px rgba(30, 142, 62, 0.3);
-  transition: all 0.2s ease;
-}
-
-.modal-btn-join:hover {
-  background: linear-gradient(135deg, #137333 0%, #0D5323 100%);
-  color: #FFFFFF;
-  transform: translateY(-1px);
-}
-
-.no-link-warning {
-  color: #8B5CF6;
-  font-size: 13px;
-  margin: 0;
-}
-
-/* Modal Details Grid */
-.modal-details-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-
-.detail-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
+/* Modal Structured Sections */
+.modal-section {
   background: #FAF8F5;
   border: 1px solid #ECE4D6;
-  border-radius: 10px;
-  padding: 12px 14px;
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.detail-icon-circle {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+.modal-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #EFE8DC;
+}
+
+.modal-section-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
   background: #F3ECE1;
   color: #45101A;
   display: flex;
@@ -1273,71 +1199,330 @@
   flex-shrink: 0;
 }
 
+.modal-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #45101A;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Details Grid */
+.modal-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #FFFFFF;
+  border: 1px solid #EBE2D4;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.detail-item-full {
+  grid-column: span 2;
+}
+
+.detail-icon-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #FAF5EB;
+  color: #8C6219;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.detail-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
 .detail-label {
   display: block;
   font-size: 11px;
   font-weight: 600;
-  color: #726C64;
+  color: #76716B;
   margin-bottom: 2px;
 }
 
 .detail-value {
   display: block;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 600;
   color: #1A1715;
+  word-break: break-word;
+}
+
+.detail-value.text-muted {
+  color: #9C9488;
+  font-weight: normal;
 }
 
 .detail-link {
-  font-size: 14px;
-  color: #B68636;
+  font-size: 13px;
+  color: #8C6219;
   font-weight: 600;
   word-break: break-all;
+  text-decoration: none;
+  transition: color 0.15s ease;
 }
 
 .detail-link:hover {
   text-decoration: underline;
+  color: #45101A;
 }
 
-/* Notes Section */
+.detail-badge-wrap {
+  margin-top: 2px;
+}
+
+/* Notes & Message Section */
 .modal-notes-section {
   background: #FFFDF9;
   border: 1px solid #EBE0CF;
   border-radius: 10px;
-  padding: 14px 16px;
+  padding: 12px 14px;
 }
 
 .notes-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
+  gap: 6px;
+  font-size: 11px;
   font-weight: 700;
   color: #45101A;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .notes-content {
   font-size: 13px;
   color: #38342F;
-  line-height: 1.6;
+  line-height: 1.55;
+  margin: 0;
   white-space: pre-wrap;
 }
 
-.modal-footer-meta {
+/* Consultation Cards */
+.modal-consultation-card {
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.consult-video-confirmed {
+  background: linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%);
+  border: 1px solid #A7F3D0;
+}
+
+.consult-pending-state {
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+}
+
+.consult-in-person-state {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+}
+
+.consult-cancelled-state {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+}
+
+.consult-default-state {
+  background: #FAF8F5;
+  border: 1px solid #ECE4D6;
+}
+
+.consult-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.consult-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.consult-badge-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.video-icon-bg {
+  background: #D1FAE5;
+  color: #047857;
+}
+
+.pending-icon-bg {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.clinic-icon-bg {
+  background: #E0E7FF;
+  color: #3730A3;
+}
+
+.cancel-icon-bg {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+.consult-headline {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1E293B;
+  display: block;
+}
+
+.consult-subtext {
+  font-size: 12px;
+  color: #64748B;
+  margin: 2px 0 0 0;
+  line-height: 1.4;
+}
+
+.consult-video-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.meeting-url-display {
+  background: #FFFFFF;
+  border: 1px dashed #6EE7B7;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #065F46;
+  word-break: break-all;
+}
+
+.consult-btn-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-btn-join {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #1E8E3E 0%, #137333 100%);
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(30, 142, 62, 0.25);
+  transition: all 0.15s ease;
+}
+
+.modal-btn-join:hover {
+  background: linear-gradient(135deg, #137333 0%, #0D5323 100%);
+  color: #FFFFFF;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(30, 142, 62, 0.35);
+}
+
+.btn-copy-meet-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: #FFFFFF;
+  border: 1px solid #A7F3D0;
+  color: #065F46;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-copy-meet-sm:hover {
+  background: #ECFDF5;
+  border-color: #34D399;
+}
+
+.consult-no-link-warning {
+  font-size: 12px;
+  color: #047857;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* System Information Section */
+.modal-section-system {
+  background: #FAF9F6;
+  border: 1px solid #EAE3D6;
+}
+
+.modal-system-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.system-item {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
   gap: 8px;
+}
+
+.system-label {
+  color: #76716B;
+  font-weight: 600;
+}
+
+.system-code-val {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 11px;
-  color: #8A847C;
-  border-top: 1px solid #ECE4D6;
-  padding-top: 12px;
+  background: #F3ECE1;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: #45101A;
+  border: 1px solid #E4D9C8;
+  word-break: break-all;
+}
+
+.system-val {
+  color: #1A1715;
+  font-weight: 600;
 }
 
 .modal-footer {
-  padding: 16px 28px;
+  padding: 14px 26px;
   background: #FAF6EF;
   border-top: 1px solid #EBE1D2;
   display: flex;
@@ -1345,13 +1530,14 @@
 }
 
 .btn-modal-close {
-  padding: 8px 20px;
+  padding: 8px 22px;
   border-radius: 8px;
   background: #45101A;
   color: #FAF4E8;
   font-weight: 600;
   font-size: 13px;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .btn-modal-close:hover {
@@ -1506,5 +1692,42 @@
   }
   .admin-welcome-bar {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .modal-backdrop {
+    padding: 10px;
+  }
+  .modal-card {
+    max-height: 94vh;
+    border-radius: 16px;
+  }
+  .modal-header {
+    padding: 16px 18px;
+  }
+  .modal-body {
+    padding: 16px 18px;
+    gap: 14px;
+  }
+  .modal-section {
+    padding: 14px;
+  }
+  .modal-details-grid {
+    grid-template-columns: 1fr;
+  }
+  .detail-item-full {
+    grid-column: span 1;
+  }
+  .modal-status-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .consult-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .modal-footer {
+    padding: 12px 18px;
   }
 }

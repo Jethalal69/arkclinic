@@ -23,6 +23,7 @@ export interface Appointment {
   message: string | null;
   status: AppointmentStatus;
   meeting_link: string | null;
+  calendar_event_id?: string | null;
   created_at: string;
 }
 
