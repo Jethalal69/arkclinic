@@ -8,7 +8,14 @@ import { ContactSection } from './components/Contact/ContactSection';
 import { Footer } from './components/Footer/Footer';
 import { AdminDashboard } from './components/Admin/AdminDashboard';
 import { AdminLogin } from './components/Admin/AdminLogin';
-import { getAdminSession, isAuthorizedAdminEmail } from './lib/auth';
+import {
+  getAdminSession,
+  isAuthorizedAdminEmail,
+  checkAdminSessionExpiry,
+  setSessionExpiryMessage,
+  logoutAdmin,
+  STORAGE_KEYS,
+} from './lib/auth';
 import { supabase } from './lib/supabase';
 import './App.css';
 
@@ -54,7 +61,7 @@ export function App() {
     };
   }, []);
 
-  // 2. Check and listen to Supabase Auth State
+  // 2. Check and listen to Supabase Auth State & Multi-tab Storage Events
   useEffect(() => {
     let isMounted = true;
 
@@ -78,18 +85,41 @@ export function App() {
     // Subscribe to auth changes (login, logout, token refresh)
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session?.user && isAuthorizedAdminEmail(session.user.email)) {
-        if (isMounted) setIsAuthenticated(true);
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_OUT' || !session) {
+        if (isMounted) setIsAuthenticated(false);
+      } else if (session?.user && isAuthorizedAdminEmail(session.user.email)) {
+        const expiry = checkAdminSessionExpiry();
+        if (expiry.isExpired) {
+          if (expiry.reason) {
+            setSessionExpiryMessage(expiry.reason);
+          }
+          await logoutAdmin();
+          if (isMounted) setIsAuthenticated(false);
+        } else {
+          if (isMounted) setIsAuthenticated(true);
+        }
       } else {
         if (isMounted) setIsAuthenticated(false);
       }
       if (isMounted) setIsCheckingAuth(false);
     });
 
+    // Multi-tab sync: detect logout or session expiry triggered from another tab
+    const handleStorageChange = (e: StorageEvent) => {
+      if (
+        e.key === STORAGE_KEYS.EXPIRY_MESSAGE ||
+        (e.key === STORAGE_KEYS.SESSION_START && e.newValue === null)
+      ) {
+        if (isMounted) setIsAuthenticated(false);
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+
     return () => {
       isMounted = false;
       subscription?.unsubscribe();
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
 

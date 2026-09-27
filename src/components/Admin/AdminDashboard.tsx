@@ -42,7 +42,13 @@ import {
   updateAppointmentStatus,
   supabase,
 } from '../../lib/supabase';
-import { logoutAdmin } from '../../lib/auth';
+import {
+  logoutAdmin,
+  recordAdminActivity,
+  checkAdminSessionExpiry,
+  setSessionExpiryMessage,
+  STORAGE_KEYS,
+} from '../../lib/auth';
 import './AdminDashboard.css';
 
 // Helper to extract clean object path in bucket (stripping leading 'prescriptions/')
@@ -138,6 +144,101 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [prescriptionLightbox]);
+
+  // --------------------------------------------------------------------------
+  // SECURE SESSION INACTIVITY TIMEOUT (30m) & MAX LIFETIME (12h) AUTO-LOGOUT
+  // --------------------------------------------------------------------------
+  useEffect(() => {
+    let lastRecordedActivity = Date.now();
+    recordAdminActivity();
+
+    // Throttled user activity handler (records at most once every 2 seconds)
+    const handleUserActivity = () => {
+      const now = Date.now();
+      if (now - lastRecordedActivity >= 2000) {
+        lastRecordedActivity = now;
+        recordAdminActivity();
+      }
+    };
+
+    // Evaluate session expiry against inactivity and max duration rules
+    const performExpiryCheck = async () => {
+      const expiry = checkAdminSessionExpiry();
+      if (expiry.isExpired) {
+        if (expiry.reason) {
+          setSessionExpiryMessage(expiry.reason);
+        }
+        await logoutAdmin();
+        if (onLogout) {
+          onLogout();
+        }
+      }
+    };
+
+    // Run check immediately on mount
+    performExpiryCheck();
+
+    // Comprehensive user interaction event listeners
+    const activityEvents: (keyof WindowEventMap)[] = [
+      'mousemove',
+      'mousedown',
+      'keydown',
+      'scroll',
+      'touchstart',
+      'touchmove',
+      'click',
+    ];
+
+    activityEvents.forEach((eventType) => {
+      window.addEventListener(eventType, handleUserActivity, { passive: true });
+    });
+
+    // Check expiry periodically every 10 seconds
+    const intervalId = setInterval(performExpiryCheck, 10000);
+
+    // Multi-tab synchronization via storage events
+    const handleStorageChange = (e: StorageEvent) => {
+      if (
+        e.key === STORAGE_KEYS.EXPIRY_MESSAGE ||
+        (e.key === STORAGE_KEYS.SESSION_START && e.newValue === null)
+      ) {
+        if (onLogout) {
+          onLogout();
+        }
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+
+    // Visibility change check (when admin switches back to this tab)
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        performExpiryCheck();
+        handleUserActivity();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Supabase auth state subscription: catch remote sign-out
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') {
+        if (onLogout) {
+          onLogout();
+        }
+      }
+    });
+
+    return () => {
+      activityEvents.forEach((eventType) => {
+        window.removeEventListener(eventType, handleUserActivity);
+      });
+      clearInterval(intervalId);
+      window.removeEventListener('storage', handleStorageChange);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      subscription?.unsubscribe();
+    };
+  }, [onLogout]);
 
   const handleCloseDetailModal = () => {
     setSelectedAppointment(null);

@@ -14,15 +14,17 @@ import {
   sendAdminOtp,
   verifyAdminOtp,
   getAuthorizedAdminEmail,
+  getSessionExpiryMessage,
 } from '../../lib/auth';
 import './AdminLogin.css';
 
 interface AdminLoginProps {
   onLoginSuccess: () => void;
   onNavigateHome: () => void;
+  sessionExpiredMessage?: string | null;
 }
 
-export const AdminLogin: FC<AdminLoginProps> = ({ onLoginSuccess, onNavigateHome }) => {
+export const AdminLogin: FC<AdminLoginProps> = ({ onLoginSuccess, onNavigateHome, sessionExpiredMessage }) => {
   const [step, setStep] = useState<'email' | 'otp'>('email');
   const [email, setEmail] = useState<string>('');
   const [otpDigits, setOtpDigits] = useState<string[]>(['', '', '', '', '', '']);
@@ -32,6 +34,18 @@ export const AdminLogin: FC<AdminLoginProps> = ({ onLoginSuccess, onNavigateHome
   const [cooldown, setCooldown] = useState<number>(0);
 
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  // Check for session expiry notice on mount
+  useEffect(() => {
+    if (sessionExpiredMessage) {
+      setErrorMessage(sessionExpiredMessage);
+    } else {
+      const expiryNotice = getSessionExpiryMessage();
+      if (expiryNotice) {
+        setErrorMessage(expiryNotice);
+      }
+    }
+  }, [sessionExpiredMessage]);
 
   // Countdown timer for resend OTP
   useEffect(() => {
