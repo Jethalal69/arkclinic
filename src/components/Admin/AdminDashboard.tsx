@@ -27,20 +27,24 @@ import {
   FileText,
   Check,
   Info,
+  LogOut,
 } from 'lucide-react';
 import {
   Appointment,
   AppointmentStatus,
   fetchAppointments,
   updateAppointmentStatus,
+  supabase,
 } from '../../lib/supabase';
+import { logoutAdmin } from '../../lib/auth';
 import './AdminDashboard.css';
 
 interface AdminDashboardProps {
   onNavigateHome: () => void;
+  onLogout?: () => void;
 }
 
-export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome }) => {
+export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogout }) => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
@@ -197,12 +201,21 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome }) => {
     setIsUpdatingStatus(true);
 
     try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session || !session.access_token) {
+        throw new Error('Authentication required. Please sign in to perform admin actions.');
+      }
+
       const response = await fetch(
         'https://taranjeet09.app.n8n.cloud/webhook/admin-confirm-appointment',
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.access_token}`,
           },
           body: JSON.stringify({
             id: appointmentId,
@@ -267,12 +280,21 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome }) => {
     setIsUpdatingStatus(true);
 
     try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session || !session.access_token) {
+        throw new Error('Authentication required. Please sign in to perform admin actions.');
+      }
+
       const response = await fetch(
         'https://taranjeet09.app.n8n.cloud/webhook/admin-cancel-appointment',
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.access_token}`,
           },
           body: JSON.stringify({
             id: appointmentId,
@@ -362,6 +384,19 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome }) => {
     setCopiedLink(true);
     showToast('Meeting link copied to clipboard!', 'info');
     setTimeout(() => setCopiedLink(false), 2500);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logoutAdmin();
+      showToast('Logged out successfully', 'info');
+      if (onLogout) {
+        onLogout();
+      }
+    } catch (err: any) {
+      console.error('Logout error:', err);
+      showToast('Failed to log out', 'error');
+    }
   };
 
   const resetFilters = () => {
@@ -524,6 +559,15 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome }) => {
               <span className="live-dot" />
               <span>Supabase Live</span>
             </div>
+            <button
+              type="button"
+              className="admin-logout-btn"
+              onClick={handleLogout}
+              title="Sign out of Clinical Portal"
+            >
+              <LogOut size={16} />
+              <span>Logout</span>
+            </button>
           </div>
         </div>
       </header>

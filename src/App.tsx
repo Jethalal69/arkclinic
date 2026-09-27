@@ -7,10 +7,15 @@ import { DoctorsSection } from './components/Doctors/DoctorsSection';
 import { ContactSection } from './components/Contact/ContactSection';
 import { Footer } from './components/Footer/Footer';
 import { AdminDashboard } from './components/Admin/AdminDashboard';
+import { AdminLogin } from './components/Admin/AdminLogin';
+import { getAdminSession, isAuthorizedAdminEmail } from './lib/auth';
+import { supabase } from './lib/supabase';
 import './App.css';
 
 export function App() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
 
   // Determine current view from URL pathname or hash
   const getCurrentRoute = (): 'home' | 'admin' => {
@@ -34,6 +39,7 @@ export function App() {
 
   const [route, setRoute] = useState<'home' | 'admin'>(getCurrentRoute);
 
+  // 1. Listen to URL/route changes
   useEffect(() => {
     const handleLocationChange = () => {
       setRoute(getCurrentRoute());
@@ -45,6 +51,45 @@ export function App() {
     return () => {
       window.removeEventListener('popstate', handleLocationChange);
       window.removeEventListener('hashchange', handleLocationChange);
+    };
+  }, []);
+
+  // 2. Check and listen to Supabase Auth State
+  useEffect(() => {
+    let isMounted = true;
+
+    const checkInitialSession = async () => {
+      try {
+        const { isAuthorized } = await getAdminSession();
+        if (isMounted) {
+          setIsAuthenticated(isAuthorized);
+          setIsCheckingAuth(false);
+        }
+      } catch {
+        if (isMounted) {
+          setIsAuthenticated(false);
+          setIsCheckingAuth(false);
+        }
+      }
+    };
+
+    checkInitialSession();
+
+    // Subscribe to auth changes (login, logout, token refresh)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user && isAuthorizedAdminEmail(session.user.email)) {
+        if (isMounted) setIsAuthenticated(true);
+      } else {
+        if (isMounted) setIsAuthenticated(false);
+      }
+      if (isMounted) setIsCheckingAuth(false);
+    });
+
+    return () => {
+      isMounted = false;
+      subscription?.unsubscribe();
     };
   }, []);
 
@@ -86,9 +131,32 @@ export function App() {
     }
   };
 
-  // Render Admin Dashboard if route is 'admin'
+  // Render Admin View if route is 'admin'
   if (route === 'admin') {
-    return <AdminDashboard onNavigateHome={() => navigateTo('home')} />;
+    if (isCheckingAuth) {
+      return (
+        <div className="admin-auth-loading">
+          <div className="admin-loading-spinner" />
+          <span>Verifying Admin Authorization...</span>
+        </div>
+      );
+    }
+
+    if (!isAuthenticated) {
+      return (
+        <AdminLogin
+          onLoginSuccess={() => setIsAuthenticated(true)}
+          onNavigateHome={() => navigateTo('home')}
+        />
+      );
+    }
+
+    return (
+      <AdminDashboard
+        onNavigateHome={() => navigateTo('home')}
+        onLogout={() => setIsAuthenticated(false)}
+      />
+    );
   }
 
   // Render Public Clinic Website
