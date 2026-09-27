@@ -867,6 +867,14 @@
   color: #9C9488;
 }
 
+.no-active-consult {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #9C9488;
+}
+
 .in-person-note {
   display: inline-flex;
   align-items: center;

@@ -908,6 +908,9 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
                     {filteredAppointments.map((appointment) => {
                       const isVideo = (appointment.appointment_type || '').toLowerCase().includes('video');
                       const hasMeetLink = Boolean(appointment.meeting_link && appointment.meeting_link.trim());
+                      const status = (appointment.status || '').toLowerCase();
+                      const isConfirmed = status === 'confirmed';
+                      const isCancelled = status === 'cancelled';
 
                       return (
                         <tr key={appointment.id} className="appointment-row">
@@ -986,39 +989,58 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
 
                           {/* Meeting Link / Video Action */}
                           <td>
-                            {isVideo && hasMeetLink ? (
-                              <div className="meet-link-group">
-                                <a
-                                  href={appointment.meeting_link!}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="btn-join-meet"
-                                  title="Open Google Meet session"
-                                >
-                                  <Video size={14} />
-                                  <span>Join Google Meet</span>
-                                  <ExternalLink size={12} />
-                                </a>
-                                <button
-                                  type="button"
-                                  className="btn-copy-meet"
-                                  onClick={() => handleCopyMeetingLink(appointment.meeting_link!)}
-                                  title="Copy Google Meet Link"
-                                >
-                                  <Copy size={13} />
-                                </button>
-                              </div>
-                            ) : isVideo ? (
-                              <span className="no-meet-link">
-                                <Video size={13} />
-                                <span>Link Pending</span>
-                              </span>
-                            ) : (
-                              <span className="in-person-note">
-                                <Building2 size={13} />
-                                <span>In-Clinic Visit</span>
-                              </span>
-                            )}
+                            {(() => {
+                              if (isCancelled) {
+                                return (
+                                  <span className="no-active-consult">
+                                    <XCircle size={13} />
+                                    <span>No Active Consultation</span>
+                                  </span>
+                                );
+                              }
+
+                              if (isVideo) {
+                                if (isConfirmed && hasMeetLink) {
+                                  return (
+                                    <div className="meet-link-group">
+                                      <a
+                                        href={appointment.meeting_link!}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="btn-join-meet"
+                                        title="Open Google Meet session"
+                                      >
+                                        <Video size={14} />
+                                        <span>Join Google Meet</span>
+                                        <ExternalLink size={12} />
+                                      </a>
+                                      <button
+                                        type="button"
+                                        className="btn-copy-meet"
+                                        onClick={() => handleCopyMeetingLink(appointment.meeting_link!)}
+                                        title="Copy Google Meet Link"
+                                      >
+                                        <Copy size={13} />
+                                      </button>
+                                    </div>
+                                  );
+                                }
+
+                                return (
+                                  <span className="no-meet-link">
+                                    <Video size={13} />
+                                    <span>Link Pending</span>
+                                  </span>
+                                );
+                              }
+
+                              return (
+                                <span className="in-person-note">
+                                  <Building2 size={13} />
+                                  <span>In-Clinic Visit</span>
+                                </span>
+                              );
+                            })()}
                           </td>
 
                           {/* Actions */}
