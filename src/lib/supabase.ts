@@ -24,6 +24,7 @@ export interface Appointment {
   status: AppointmentStatus;
   meeting_link: string | null;
   calendar_event_id?: string | null;
+  prescription_path?: string | null;
   created_at: string;
 }
 

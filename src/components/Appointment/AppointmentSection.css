@@ -590,12 +590,15 @@
 .uploaded-file-pill {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
-  background-color: rgba(255, 255, 255, 0.65);
+  gap: 12px;
+  padding: 10px 14px;
+  background-color: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(182, 134, 54, 0.35);
   border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  transition: all 200ms ease;
 }
 
 .file-pill-icon {
@@ -603,15 +606,54 @@
   flex-shrink: 0;
 }
 
+.file-pill-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
+}
+
 .file-pill-name {
   font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
   font-size: 0.84rem;
   font-weight: 600;
   color: #1E293B;
-  flex-grow: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.file-pill-size {
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.72rem;
+  color: #64748B;
+  margin-top: 1px;
+}
+
+.file-pill-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.file-change-btn {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(182, 134, 54, 0.3);
+  color: #8C6226;
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.file-change-btn:hover {
+  border-color: #B68636;
+  background-color: rgba(182, 134, 54, 0.12);
+  color: #45101A;
 }
 
 .file-remove-btn {
@@ -619,7 +661,7 @@
   border: none;
   color: #64748B;
   cursor: pointer;
-  padding: 4px;
+  padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -628,8 +670,8 @@
 }
 
 .file-remove-btn:hover {
-  background-color: rgba(226, 232, 240, 0.8);
-  color: #EF4444;
+  background-color: rgba(239, 68, 68, 0.12);
+  color: #DC2626;
 }
 
 /* --------------------------------------------------------------------------

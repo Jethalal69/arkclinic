@@ -20,7 +20,33 @@ import {
   AlertCircle,
   Loader2,
 } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 import './AppointmentSection.css';
+
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+const ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png'];
+const ALLOWED_MIME_TYPES = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+
+const generateUniqueId = (): string => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
+};
+
+const sanitizeFileName = (fileName: string): string => {
+  const lastDotIndex = fileName.lastIndexOf('.');
+  const ext = lastDotIndex !== -1 ? fileName.slice(lastDotIndex).toLowerCase() : '';
+  const baseName = lastDotIndex !== -1 ? fileName.slice(0, lastDotIndex) : fileName;
+
+  const cleanBase = baseName
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_+|_+$/g, '') || 'prescription';
+
+  return `${cleanBase}${ext}`;
+};
 
 interface ConsultationOption {
   id: string;
@@ -148,18 +174,20 @@ export const AppointmentSection: FC = () => {
   };
 
   const processFile = (file: File) => {
-    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
-    if (!allowedTypes.includes(file.type)) {
+    const fileExt = file.name.split('.').pop()?.toLowerCase() || '';
+    const isAllowedType = ALLOWED_MIME_TYPES.includes(file.type) || ALLOWED_EXTENSIONS.includes(fileExt);
+
+    if (!isAllowedType) {
       setErrors((prev) => ({
         ...prev,
-        file: 'Please upload a PDF, JPG, or PNG file.',
+        file: 'Please upload a valid PDF, JPG, JPEG, or PNG file.',
       }));
       return;
     }
-    if (file.size > 10 * 1024 * 1024) {
+    if (file.size > MAX_FILE_SIZE_BYTES) {
       setErrors((prev) => ({
         ...prev,
-        file: 'File size exceeds 10MB limit.',
+        file: 'File size exceeds the 5MB limit. Please choose a smaller file.',
       }));
       return;
     }
@@ -169,6 +197,18 @@ export const AppointmentSection: FC = () => {
       return next;
     });
     setMedicalFile(file);
+  };
+
+  const handleRemoveFile = () => {
+    setMedicalFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next.file;
+      return next;
+    });
   };
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -269,6 +309,39 @@ export const AppointmentSection: FC = () => {
         : `Home Visit Address: ${address.trim()}`;
     }
 
+    let uploadedPrescriptionPath: string | null = null;
+
+    // Optional prescription upload to private Supabase Storage bucket
+    if (medicalFile) {
+      try {
+        const uniqueId = generateUniqueId();
+        const cleanFileName = sanitizeFileName(medicalFile.name);
+        const objectPath = `${uniqueId}/${cleanFileName}`;
+
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('prescriptions')
+          .upload(objectPath, medicalFile, {
+            cacheControl: '3600',
+            upsert: false,
+          });
+
+        if (uploadError) {
+          console.error('Supabase storage upload error:', uploadError);
+          setSubmitError('Failed to upload prescription. Please verify the file is under 5MB and in PDF/JPG/PNG format, then try again.');
+          setIsSubmitting(false);
+          return;
+        }
+
+        // Store path identifier: 'prescriptions/<unique-id>/<sanitized-filename>'
+        uploadedPrescriptionPath = `prescriptions/${uploadData?.path || objectPath}`;
+      } catch (uploadErr) {
+        console.error('Unexpected upload error:', uploadErr);
+        setSubmitError('Unable to upload prescription file at this moment. Please try again.');
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
     const payload = {
       name: fullName.trim(),
       phone: phoneNumber.trim(),
@@ -278,6 +351,7 @@ export const AppointmentSection: FC = () => {
       date: preferredDate,
       time: formattedTime,
       message: formattedMessage || '',
+      prescription_path: uploadedPrescriptionPath,
     };
 
     try {
@@ -337,6 +411,9 @@ export const AppointmentSection: FC = () => {
     setEmail('');
     setReason('');
     setMedicalFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
     setErrors({});
     setSubmitError(null);
     setIsSuccess(false);
@@ -680,15 +757,15 @@ export const AppointmentSection: FC = () => {
                       />
                     </div>
 
-                    {/* 7. UPLOAD MEDICAL DOCUMENTS */}
+                    {/* 7. UPLOAD PRESCRIPTION */}
                     <div className="form-group-block">
-                      <label className="form-section-label">
-                        7. Upload Medical Documents <span className="optional-tag">(Optional)</span>
+                      <label htmlFor="medical-file-upload" className="form-section-label">
+                        7. Upload Prescription <span className="optional-tag">(Optional)</span>
                       </label>
                       <input
                         ref={fileInputRef}
                         type="file"
-                        accept=".pdf,.jpg,.jpeg,.png"
+                        accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
                         onChange={handleFileChange}
                         className="hidden-file-input"
                         id="medical-file-upload"
@@ -703,6 +780,7 @@ export const AppointmentSection: FC = () => {
                           onClick={() => fileInputRef.current?.click()}
                           role="button"
                           tabIndex={0}
+                          aria-label="Upload Prescription (Optional). Accepts PDF, JPG, JPEG or PNG up to 5MB."
                           onKeyDown={(e) => {
                             if (e.key === 'Enter' || e.key === ' ') {
                               fileInputRef.current?.click();
@@ -714,28 +792,49 @@ export const AppointmentSection: FC = () => {
                           </div>
                           <div className="upload-text-group">
                             <span className="upload-title">
-                              Upload Prescription or Medical Reports
+                              Upload Prescription (Optional)
                             </span>
                             <span className="upload-subtitle">
-                              PDF, JPG or PNG • Optional
+                              PDF, JPG, JPEG or PNG • Max 5 MB
                             </span>
                           </div>
                         </div>
                       ) : (
                         <div className="uploaded-file-pill">
-                          <FileText size={16} className="file-pill-icon" aria-hidden="true" />
-                          <span className="file-pill-name">{medicalFile.name}</span>
-                          <button
-                            type="button"
-                            className="file-remove-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setMedicalFile(null);
-                            }}
-                            aria-label="Remove uploaded file"
-                          >
-                            <X size={14} />
-                          </button>
+                          <FileText size={18} className="file-pill-icon" aria-hidden="true" />
+                          <div className="file-pill-info">
+                            <span className="file-pill-name">{medicalFile.name}</span>
+                            <span className="file-pill-size">
+                              {medicalFile.size < 1024 * 1024
+                                ? `${(medicalFile.size / 1024).toFixed(1)} KB`
+                                : `${(medicalFile.size / (1024 * 1024)).toFixed(2)} MB`}
+                            </span>
+                          </div>
+                          <div className="file-pill-actions">
+                            <button
+                              type="button"
+                              className="file-change-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                fileInputRef.current?.click();
+                              }}
+                              aria-label="Change selected file"
+                            >
+                              Change
+                            </button>
+                            <button
+                              type="button"
+                              className="file-remove-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRemoveFile();
+                              }}
+                              aria-label="Remove uploaded file"
+                              title="Remove file"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
                         </div>
                       )}
                       {errors.file && (
@@ -824,6 +923,15 @@ export const AppointmentSection: FC = () => {
                   <span className="summary-label">Preferred Time:</span>
                   <span className="summary-value">{preferredTime}</span>
                 </div>
+                {medicalFile && (
+                  <div className="summary-row">
+                    <span className="summary-label">Prescription:</span>
+                    <span className="summary-value" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                      <FileText size={13} aria-hidden="true" />
+                      <span>{medicalFile.name} (Attached)</span>
+                    </span>
+                  </div>
+                )}
               </div>
 
               <button
