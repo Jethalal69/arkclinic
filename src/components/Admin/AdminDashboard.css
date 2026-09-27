@@ -1683,59 +1683,489 @@
   opacity: 1;
 }
 
-/* Responsive adjustments */
-@media (max-width: 900px) {
+/* ==========================================================================
+   Responsive adjustments
+   ========================================================================== */
+
+/* Tablet (max-width: 1024px) */
+@media (max-width: 1024px) {
   .admin-header-container {
-    flex-direction: column;
-    align-items: stretch;
+    padding: 14px 20px;
   }
-  .admin-brand-section {
-    justify-content: space-between;
+  .admin-container {
+    padding: 0 20px;
   }
-  .admin-header-actions {
-    justify-content: space-between;
-  }
-  .modal-details-grid {
-    grid-template-columns: 1fr;
-  }
-  .admin-welcome-bar {
-    flex-direction: column;
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 }
 
+/* Mobile & Small Tablet (max-width: 768px) */
+@media (max-width: 768px) {
+  .admin-root {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  .admin-container {
+    padding: 0 16px;
+    max-width: 100%;
+  }
+
+  /* 1. Mobile Header */
+  .admin-header-container {
+    padding: 12px 16px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .admin-brand-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .admin-brand-divider {
+    display: none;
+  }
+
+  .admin-brand-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .admin-crest {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+  }
+
+  .crest-ark {
+    font-size: 13px;
+  }
+
+  .admin-title-row {
+    gap: 6px;
+  }
+
+  .admin-title {
+    font-size: 16px;
+  }
+
+  .admin-tag {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  .admin-subtitle {
+    display: none;
+  }
+
+  .admin-back-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .admin-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    padding-top: 8px;
+    border-top: 1px solid rgba(182, 134, 54, 0.15);
+  }
+
+  .admin-refresh-btn,
+  .admin-logout-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 8px 10px;
+    font-size: 12px;
+    border-radius: 8px;
+  }
+
+  .admin-live-pill {
+    padding: 6px 10px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  /* 2. Dashboard Hero */
+  .admin-welcome-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 18px 16px;
+    gap: 14px;
+    border-radius: 14px;
+    margin-bottom: 18px;
+  }
+
+  .admin-page-heading {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+
+  .admin-page-desc {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .admin-today-badge {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 10px 14px;
+    border-radius: 10px;
+  }
+
+  /* 3. Stat Cards - Single Column on Mobile */
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .stat-card {
+    padding: 16px 18px;
+    border-radius: 12px;
+  }
+
+  .stat-number {
+    font-size: 28px;
+  }
+
+  /* 4. Search & Filters */
+  .admin-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+    gap: 14px;
+    border-radius: 14px;
+  }
+
+  .toolbar-search-box {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .toolbar-search-input {
+    font-size: 14px;
+    padding: 11px 38px 11px 40px;
+  }
+
+  .toolbar-filters {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .filter-select-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    width: 100%;
+  }
+
+  .filter-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #726C64;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .filter-select,
+  .filter-date-input {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+
+  .filter-reset-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .results-summary {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  /* 5. Appointments Table to Mobile Card Conversion */
+  .appointments-table-card {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    overflow: visible;
+  }
+
+  .table-responsive {
+    overflow-x: visible;
+    width: 100%;
+  }
+
+  .appointments-table {
+    display: block;
+    width: 100%;
+    border: none;
+  }
+
+  .appointments-table thead {
+    display: none;
+  }
+
+  .appointments-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .appointment-row {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: #FFFFFF;
+    border: 1px solid #ECE4D6;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 4px 18px rgba(45, 20, 24, 0.05);
+    gap: 12px;
+  }
+
+  .appointment-row:hover {
+    background-color: #FFFFFF;
+    box-shadow: 0 6px 22px rgba(45, 20, 24, 0.08);
+  }
+
+  .appointment-row td {
+    display: block;
+    padding: 0;
+    border: none;
+    width: 100%;
+  }
+
+  /* Patient Details Header in Card */
+  .td-patient .patient-cell {
+    min-width: 0;
+    width: 100%;
+    gap: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #F4EFE6;
+  }
+
+  .td-patient .patient-avatar {
+    width: 44px;
+    height: 44px;
+    font-size: 15px;
+  }
+
+  .td-patient .patient-name-btn {
+    font-size: 16px;
+    color: #45101A;
+    margin-bottom: 3px;
+  }
+
+  .td-patient .patient-contacts {
+    gap: 8px 12px;
+  }
+
+  .td-patient .contact-link {
+    font-size: 12px;
+    color: #8C6219;
+  }
+
+  /* Key-Value Rows on Mobile Card */
+  .td-doctor,
+  .td-type,
+  .td-status {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 13px;
+  }
+
+  .td-doctor::before {
+    content: "Assigned Doctor";
+    font-size: 11px;
+    font-weight: 700;
+    color: #76716B;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .td-type::before {
+    content: "Appointment Type";
+    font-size: 11px;
+    font-weight: 700;
+    color: #76716B;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .td-status::before {
+    content: "Current Status";
+    font-size: 11px;
+    font-weight: 700;
+    color: #76716B;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Scheduled Date & Time Card Box */
+  .td-datetime {
+    background: #FAF8F5;
+    border: 1px solid #ECE4D6;
+    border-radius: 10px;
+    padding: 10px 14px !important;
+  }
+
+  .td-datetime .datetime-cell {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .td-datetime .date-item,
+  .td-datetime .time-item {
+    font-size: 13px;
+  }
+
+  /* Consultation Link Mobile Box */
+  .td-consult {
+    background: #FAF9F6;
+    border: 1px dashed #DDD2C0;
+    border-radius: 10px;
+    padding: 10px 12px !important;
+  }
+
+  .td-consult .meet-link-group {
+    display: flex;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .td-consult .btn-join-meet {
+    flex: 1;
+    justify-content: center;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .td-consult .btn-copy-meet {
+    padding: 10px 14px;
+  }
+
+  .td-consult .no-active-consult,
+  .td-consult .no-meet-link,
+  .td-consult .in-person-note {
+    font-size: 13px;
+  }
+
+  /* Actions Bar */
+  .td-actions {
+    border-top: 1px solid #EFE8DC !important;
+    padding-top: 12px !important;
+  }
+
+  .td-actions .row-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .td-actions .action-icon-btn {
+    flex: 1;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* 6. Modal on Mobile (max-width: 640px) */
 @media (max-width: 640px) {
   .modal-backdrop {
-    padding: 10px;
+    padding: 12px;
   }
+
   .modal-card {
     max-height: 94vh;
     border-radius: 16px;
   }
+
   .modal-header {
     padding: 16px 18px;
   }
+
+  .modal-title {
+    font-size: 19px;
+  }
+
   .modal-body {
     padding: 16px 18px;
     gap: 14px;
   }
+
   .modal-section {
     padding: 14px;
   }
+
   .modal-details-grid {
     grid-template-columns: 1fr;
   }
+
   .detail-item-full {
     grid-column: span 1;
   }
+
   .modal-status-bar {
     flex-direction: column;
     align-items: stretch;
+    gap: 10px;
   }
+
   .consult-card-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 10px;
   }
+
+  .consult-btn-row {
+    width: 100%;
+  }
+
+  .modal-btn-join {
+    width: 100%;
+  }
+
   .modal-footer {
     padding: 12px 18px;
+  }
+
+  .btn-modal-close {
+    width: 100%;
+    text-align: center;
   }
 }

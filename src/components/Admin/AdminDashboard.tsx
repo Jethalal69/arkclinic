@@ -915,7 +915,7 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
                       return (
                         <tr key={appointment.id} className="appointment-row">
                           {/* Patient Info */}
-                          <td>
+                          <td className="td-patient">
                             <div className="patient-cell">
                               <div className="patient-avatar">
                                 {(appointment.patient_name || 'U')
@@ -960,7 +960,7 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
                           </td>
 
                           {/* Doctor */}
-                          <td>
+                          <td className="td-doctor">
                             <div className="doctor-cell">
                               <Stethoscope size={14} className="doctor-icon" />
                               <span>{appointment.doctor || 'Any Available Doctor'}</span>
@@ -968,10 +968,10 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
                           </td>
 
                           {/* Type */}
-                          <td>{getTypeBadge(appointment.appointment_type)}</td>
+                          <td className="td-type">{getTypeBadge(appointment.appointment_type)}</td>
 
                           {/* Date & Time */}
-                          <td>
+                          <td className="td-datetime">
                             <div className="datetime-cell">
                               <div className="date-item">
                                 <Calendar size={13} />
@@ -985,10 +985,10 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
                           </td>
 
                           {/* Status */}
-                          <td>{getStatusBadge(appointment.status)}</td>
+                          <td className="td-status">{getStatusBadge(appointment.status)}</td>
 
                           {/* Meeting Link / Video Action */}
-                          <td>
+                          <td className="td-consult">
                             {(() => {
                               if (isCancelled) {
                                 return (
