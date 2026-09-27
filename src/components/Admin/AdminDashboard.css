@@ -2169,3 +2169,491 @@
     text-align: center;
   }
 }
+
+/* --------------------------------------------------------------------------
+   PRESCRIPTION MODAL SECTION & LUXURY CARDS
+   -------------------------------------------------------------------------- */
+.modal-section-prescription {
+  background: linear-gradient(135deg, #FAF7F2 0%, #F5EFE6 100%);
+  border: 1px solid #E8DCBE;
+  box-shadow: 0 4px 14px rgba(182, 134, 54, 0.05);
+}
+
+.prescription-icon-gold {
+  background: #FAF0DC;
+  color: #8C6219;
+}
+
+.prescription-header-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  gap: 8px;
+}
+
+.prescription-available-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  background: #D1FAE5;
+  color: #065F46;
+  border: 1px solid #A7F3D0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.prescription-card {
+  background: #FFFFFF;
+  border: 1px solid #EAE1D3;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(69, 16, 26, 0.03);
+}
+
+.prescription-file-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.prescription-file-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.prescription-file-icon-box.pdf-type {
+  background: #FEE2E2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+}
+
+.prescription-file-icon-box.image-type {
+  background: #FAF0DC;
+  color: #8C6219;
+  border: 1px solid #ECD9B9;
+}
+
+.prescription-file-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.prescription-filename {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1E293B;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.prescription-meta-pills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.prescription-tag-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #45101A;
+  background: #F5ECE0;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid #EADBCC;
+}
+
+.prescription-ext-pill {
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748B;
+  background: #F1F5F9;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.prescription-secure-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  color: #047857;
+  font-weight: 600;
+}
+
+.prescription-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.btn-view-prescription {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #45101A 0%, #300B12 100%);
+  color: #FAF4E8;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(69, 16, 26, 0.2);
+}
+
+.btn-view-prescription:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5D1623 0%, #45101A 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(69, 16, 26, 0.28);
+}
+
+.btn-view-prescription:disabled,
+.btn-download-prescription:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-download-prescription {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  background: #FFFFFF;
+  color: #45101A;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1.5px solid #DFD5C4;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-download-prescription:hover:not(:disabled) {
+  background: #FAF6EF;
+  border-color: #B68636;
+}
+
+.prescription-error-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  color: #DC2626;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   PRESCRIPTION LIGHTBOX (SECURE IMAGE VIEWER)
+   -------------------------------------------------------------------------- */
+.prescription-lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 4, 7, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeInLightbox 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInLightbox {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.prescription-lightbox-card {
+  background: #181412;
+  border: 1px solid rgba(235, 225, 210, 0.18);
+  border-radius: 18px;
+  width: 100%;
+  max-width: 960px;
+  height: 90vh;
+  max-height: 820px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+}
+
+.lightbox-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  background: #221C19;
+  border-bottom: 1px solid rgba(235, 225, 210, 0.12);
+}
+
+.lightbox-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.lightbox-icon-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(182, 134, 54, 0.2);
+  color: #E7B866;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.lightbox-title-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.lightbox-filename {
+  color: #FAF4E8;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 340px;
+}
+
+.lightbox-subtext {
+  color: #A39C93;
+  font-size: 11px;
+  display: block;
+}
+
+.lightbox-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.lightbox-ctrl-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #E7DDD0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.lightbox-ctrl-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.18);
+  color: #FFFFFF;
+  border-color: #B68636;
+}
+
+.lightbox-ctrl-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.lightbox-zoom-reset {
+  padding: 0 10px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #E7DDD0;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.lightbox-zoom-reset:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #FFFFFF;
+}
+
+.lightbox-download-btn:hover {
+  border-color: #10B981 !important;
+  color: #10B981 !important;
+}
+
+.lightbox-close-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #FCA5A5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.lightbox-close-btn:hover {
+  background: #EF4444;
+  color: #FFFFFF;
+  border-color: #EF4444;
+}
+
+.lightbox-viewport {
+  flex: 1;
+  position: relative;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0E0A09;
+  padding: 20px;
+  user-select: none;
+}
+
+.lightbox-img-canvas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.lightbox-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8);
+}
+
+.lightbox-loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #E7DDD0;
+  background: rgba(14, 10, 9, 0.75);
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 10;
+}
+
+.lightbox-footer {
+  padding: 10px 20px;
+  background: #1F1916;
+  border-top: 1px solid rgba(235, 225, 210, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lightbox-footer-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #9E968B;
+}
+
+.btn-lightbox-done {
+  padding: 6px 16px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #FAF4E8;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-lightbox-done:hover {
+  background: #45101A;
+  border-color: #B68636;
+}
+
+@media (max-width: 640px) {
+  .prescription-header-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .prescription-actions-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-view-prescription,
+  .btn-download-prescription {
+    width: 100%;
+  }
+
+  .prescription-lightbox-backdrop {
+    padding: 8px;
+  }
+
+  .prescription-lightbox-card {
+    height: 96vh;
+    border-radius: 12px;
+  }
+
+  .lightbox-header {
+    padding: 12px 14px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .lightbox-controls {
+    justify-content: flex-end;
+  }
+
+  .lightbox-filename {
+    max-width: 240px;
+  }
+}

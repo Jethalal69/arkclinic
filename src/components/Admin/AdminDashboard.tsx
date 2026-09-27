@@ -28,6 +28,12 @@ import {
   Check,
   Info,
   LogOut,
+  Eye,
+  Download,
+  ZoomIn,
+  ZoomOut,
+  Image as ImageIcon,
+  RotateCcw,
 } from 'lucide-react';
 import {
   Appointment,
@@ -38,6 +44,43 @@ import {
 } from '../../lib/supabase';
 import { logoutAdmin } from '../../lib/auth';
 import './AdminDashboard.css';
+
+// Helper to extract clean object path in bucket (stripping leading 'prescriptions/')
+const getPrescriptionStoragePath = (path: string): string => {
+  if (!path) return '';
+  return path.replace(/^\/?prescriptions\//i, '');
+};
+
+// Helper to extract clean filename from storage path
+const getPrescriptionFileName = (path: string): string => {
+  if (!path) return 'prescription';
+  const parts = path.split('/');
+  return decodeURIComponent(parts[parts.length - 1] || 'prescription');
+};
+
+// Helper to inspect prescription extension & type
+const getPrescriptionMeta = (path: string) => {
+  const fileName = getPrescriptionFileName(path);
+  const ext = (fileName.split('.').pop() || '').toLowerCase();
+  const isPdf = ext === 'pdf';
+  const isImage = ['jpg', 'jpeg', 'png', 'webp', 'jfif', 'gif', 'svg', 'bmp', 'tiff'].includes(ext);
+
+  let typeLabel = 'Medical File';
+  if (isPdf) typeLabel = 'PDF Document';
+  else if (['jpg', 'jpeg'].includes(ext)) typeLabel = 'JPEG Image';
+  else if (ext === 'png') typeLabel = 'PNG Image';
+  else if (ext === 'jfif') typeLabel = 'JFIF Image';
+  else if (ext === 'webp') typeLabel = 'WebP Image';
+  else if (isImage) typeLabel = `${ext.toUpperCase()} Image`;
+
+  return {
+    fileName,
+    ext: ext.toUpperCase() || 'FILE',
+    isPdf,
+    isImage,
+    typeLabel,
+  };
+};
 
 interface AdminDashboardProps {
   onNavigateHome: () => void;
@@ -65,15 +108,157 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
 
+  // Prescription Viewing & Lightbox States
+  const [isLoadingPrescription, setIsLoadingPrescription] = useState<boolean>(false);
+  const [isDownloadingPrescription, setIsDownloadingPrescription] = useState<boolean>(false);
+  const [prescriptionError, setPrescriptionError] = useState<string | null>(null);
+  const [prescriptionLightbox, setPrescriptionLightbox] = useState<{
+    url: string;
+    fileName: string;
+    meta: ReturnType<typeof getPrescriptionMeta>;
+    rawPath: string;
+  } | null>(null);
+  const [lightboxZoom, setLightboxZoom] = useState<number>(1);
+  const [lightboxRotation, setLightboxRotation] = useState<number>(0);
+  const [isImageLoading, setIsImageLoading] = useState<boolean>(false);
+
   // Toast Notification
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
+
+  // Close lightbox on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (prescriptionLightbox) {
+          setPrescriptionLightbox(null);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [prescriptionLightbox]);
+
+  const handleCloseDetailModal = () => {
+    setSelectedAppointment(null);
+    setPrescriptionError(null);
+    setIsLoadingPrescription(false);
+    setIsDownloadingPrescription(false);
+  };
 
   const showToast = (text: string, type: 'success' | 'error' | 'info' = 'success') => {
     setToastMessage({ text, type });
     setTimeout(() => {
       setToastMessage(null);
     }, 4000);
+  };
+
+  // Securely view prescription using Supabase Storage Signed URLs
+  const handleViewPrescription = async (rawPath: string) => {
+    if (!rawPath) return;
+    setPrescriptionError(null);
+    setIsLoadingPrescription(true);
+
+    try {
+      const cleanPath = getPrescriptionStoragePath(rawPath);
+      const meta = getPrescriptionMeta(rawPath);
+
+      // Request a secure temporary signed URL (valid for 60 minutes)
+      const { data, error } = await supabase.storage
+        .from('prescriptions')
+        .createSignedUrl(cleanPath, 3600);
+
+      if (error || !data?.signedUrl) {
+        console.error('Failed to generate signed prescription URL:', error);
+        setPrescriptionError('Unable to load prescription. Please try again.');
+        showToast('Unable to load prescription. Please try again.', 'error');
+        return;
+      }
+
+      if (meta.isPdf) {
+        // Securely open PDF document in a new tab
+        window.open(data.signedUrl, '_blank', 'noopener,noreferrer');
+        showToast('Prescription PDF opened securely in new tab', 'info');
+      } else {
+        // Open Image Lightbox
+        setPrescriptionLightbox({
+          url: data.signedUrl,
+          fileName: meta.fileName,
+          meta,
+          rawPath,
+        });
+        setLightboxZoom(1);
+        setLightboxRotation(0);
+        setIsImageLoading(true);
+      }
+    } catch (err) {
+      console.error('Error loading prescription:', err);
+      setPrescriptionError('Unable to load prescription. Please try again.');
+      showToast('Unable to load prescription. Please try again.', 'error');
+    } finally {
+      setIsLoadingPrescription(false);
+    }
+  };
+
+  // Securely download prescription using authenticated session / signed URL
+  const handleDownloadPrescription = async (rawPath: string) => {
+    if (!rawPath) return;
+    setIsDownloadingPrescription(true);
+    setPrescriptionError(null);
+
+    try {
+      const cleanPath = getPrescriptionStoragePath(rawPath);
+      const fileName = getPrescriptionFileName(rawPath);
+
+      // Attempt 1: Direct Blob Download via Supabase Storage SDK
+      const { data: blob, error } = await supabase.storage
+        .from('prescriptions')
+        .download(cleanPath);
+
+      if (!error && blob) {
+        const blobUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(blobUrl);
+        showToast('Prescription downloaded successfully', 'success');
+        return;
+      }
+
+      // Attempt 2: Download via Signed URL with download header parameter
+      const { data: signedData, error: signError } = await supabase.storage
+        .from('prescriptions')
+        .createSignedUrl(cleanPath, 60, {
+          download: fileName,
+        });
+
+      if (!signError && signedData?.signedUrl) {
+        const response = await fetch(signedData.signedUrl);
+        if (!response.ok) throw new Error('Fetch failed');
+        const fetchedBlob = await response.blob();
+        const blobUrl = URL.createObjectURL(fetchedBlob);
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(blobUrl);
+        showToast('Prescription downloaded successfully', 'success');
+        return;
+      }
+
+      throw error || signError || new Error('Download failed');
+    } catch (err) {
+      console.error('Download prescription error:', err);
+      setPrescriptionError('Unable to load prescription. Please try again.');
+      showToast('Unable to load prescription. Please try again.', 'error');
+    } finally {
+      setIsDownloadingPrescription(false);
+    }
   };
 
   // Load Appointments from Supabase
@@ -1316,7 +1501,99 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
                 )}
               </div>
 
-              {/* 3. Consultation Information */}
+              {/* 3. Prescription Section (Rendered only when prescription_path is present) */}
+              {selectedAppointment.prescription_path && (() => {
+                const meta = getPrescriptionMeta(selectedAppointment.prescription_path);
+                return (
+                  <div className="modal-section modal-section-prescription">
+                    <div className="modal-section-header">
+                      <div className="modal-section-icon prescription-icon-gold">
+                        <FileText size={15} />
+                      </div>
+                      <div className="prescription-header-meta">
+                        <h4 className="modal-section-title">Prescription / Medical Document</h4>
+                        <span className="prescription-available-badge">
+                          <CheckCircle2 size={12} />
+                          <span>Prescription Available</span>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="prescription-card">
+                      <div className="prescription-file-info">
+                        <div className={`prescription-file-icon-box ${meta.isPdf ? 'pdf-type' : 'image-type'}`}>
+                          {meta.isPdf ? <FileText size={22} /> : <ImageIcon size={22} />}
+                        </div>
+                        <div className="prescription-file-details">
+                          <strong className="prescription-filename" title={meta.fileName}>
+                            {meta.fileName}
+                          </strong>
+                          <div className="prescription-meta-pills">
+                            <span className="prescription-tag-badge">{meta.typeLabel}</span>
+                            <span className="prescription-ext-pill">{meta.ext}</span>
+                            <span className="prescription-secure-tag">
+                              <Shield size={11} />
+                              <span>Private Supabase Storage</span>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {prescriptionError && (
+                        <div className="prescription-error-alert" role="alert">
+                          <AlertCircle size={14} />
+                          <span>{prescriptionError}</span>
+                        </div>
+                      )}
+
+                      <div className="prescription-actions-row">
+                        <button
+                          type="button"
+                          className="btn-view-prescription"
+                          onClick={() => handleViewPrescription(selectedAppointment.prescription_path!)}
+                          disabled={isLoadingPrescription || isDownloadingPrescription}
+                          title={meta.isPdf ? 'Open PDF securely in new tab' : 'Open prescription in secure viewer'}
+                        >
+                          {isLoadingPrescription ? (
+                            <>
+                              <RefreshCw size={14} className="spinning" />
+                              <span>Loading View...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Eye size={14} />
+                              <span>View Prescription</span>
+                              {meta.isPdf && <ExternalLink size={12} />}
+                            </>
+                          )}
+                        </button>
+
+                        <button
+                          type="button"
+                          className="btn-download-prescription"
+                          onClick={() => handleDownloadPrescription(selectedAppointment.prescription_path!)}
+                          disabled={isLoadingPrescription || isDownloadingPrescription}
+                          title="Download prescription to device"
+                        >
+                          {isDownloadingPrescription ? (
+                            <>
+                              <RefreshCw size={14} className="spinning" />
+                              <span>Downloading...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Download size={14} />
+                              <span>Download</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* 4. Consultation Information */}
               <div className="modal-section">
                 <div className="modal-section-header">
                   <div className="modal-section-icon">
@@ -1460,7 +1737,7 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
                 })()}
               </div>
 
-              {/* 4. System Information */}
+              {/* 5. System Information */}
               <div className="modal-section modal-section-system">
                 <div className="modal-section-header">
                   <div className="modal-section-icon">
@@ -1499,9 +1776,150 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
               <button
                 type="button"
                 className="btn-modal-close"
-                onClick={() => setSelectedAppointment(null)}
+                onClick={handleCloseDetailModal}
               >
                 Close View
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Secure Prescription Image Lightbox Viewer */}
+      {prescriptionLightbox && (
+        <div
+          className="prescription-lightbox-backdrop"
+          onClick={() => setPrescriptionLightbox(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Prescription Viewer"
+        >
+          <div
+            className="prescription-lightbox-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Lightbox Header */}
+            <div className="lightbox-header">
+              <div className="lightbox-title-wrap">
+                <div className="lightbox-icon-badge">
+                  <ImageIcon size={16} />
+                </div>
+                <div className="lightbox-title-text">
+                  <h4 className="lightbox-filename" title={prescriptionLightbox.fileName}>
+                    {prescriptionLightbox.fileName}
+                  </h4>
+                  <span className="lightbox-subtext">
+                    Secure Admin View • {prescriptionLightbox.meta.typeLabel}
+                  </span>
+                </div>
+              </div>
+
+              {/* Lightbox Controls */}
+              <div className="lightbox-controls">
+                <button
+                  type="button"
+                  className="lightbox-ctrl-btn"
+                  onClick={() => setLightboxZoom((prev) => Math.max(0.5, Math.round((prev - 0.25) * 100) / 100))}
+                  disabled={lightboxZoom <= 0.5}
+                  title="Zoom Out"
+                  aria-label="Zoom Out"
+                >
+                  <ZoomOut size={16} />
+                </button>
+
+                <button
+                  type="button"
+                  className="lightbox-zoom-reset"
+                  onClick={() => {
+                    setLightboxZoom(1);
+                    setLightboxRotation(0);
+                  }}
+                  title="Reset Zoom & Rotation"
+                >
+                  {Math.round(lightboxZoom * 100)}%
+                </button>
+
+                <button
+                  type="button"
+                  className="lightbox-ctrl-btn"
+                  onClick={() => setLightboxZoom((prev) => Math.min(3, Math.round((prev + 0.25) * 100) / 100))}
+                  disabled={lightboxZoom >= 3}
+                  title="Zoom In"
+                  aria-label="Zoom In"
+                >
+                  <ZoomIn size={16} />
+                </button>
+
+                <button
+                  type="button"
+                  className="lightbox-ctrl-btn"
+                  onClick={() => setLightboxRotation((prev) => (prev + 90) % 360)}
+                  title="Rotate Clockwise"
+                  aria-label="Rotate Clockwise"
+                >
+                  <RotateCcw size={16} style={{ transform: 'scaleX(-1)' }} />
+                </button>
+
+                <button
+                  type="button"
+                  className="lightbox-ctrl-btn lightbox-download-btn"
+                  onClick={() => handleDownloadPrescription(prescriptionLightbox.rawPath)}
+                  title="Download File"
+                  aria-label="Download File"
+                >
+                  <Download size={16} />
+                </button>
+
+                <button
+                  type="button"
+                  className="lightbox-close-btn"
+                  onClick={() => setPrescriptionLightbox(null)}
+                  title="Close Viewer (Esc)"
+                  aria-label="Close Viewer"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+
+            {/* Lightbox Viewport */}
+            <div className="lightbox-viewport">
+              {isImageLoading && (
+                <div className="lightbox-loading-overlay">
+                  <RefreshCw size={28} className="spinning" />
+                  <span>Loading Prescription Preview...</span>
+                </div>
+              )}
+              <div className="lightbox-img-canvas">
+                <img
+                  src={prescriptionLightbox.url}
+                  alt={prescriptionLightbox.fileName}
+                  className="lightbox-img"
+                  style={{
+                    transform: `scale(${lightboxZoom}) rotate(${lightboxRotation}deg)`,
+                    transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
+                  onLoad={() => setIsImageLoading(false)}
+                  onError={() => {
+                    setIsImageLoading(false);
+                    showToast('Failed to display prescription image.', 'error');
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Lightbox Footer */}
+            <div className="lightbox-footer">
+              <div className="lightbox-footer-info">
+                <Shield size={13} />
+                <span>Restricted Medical Record • Temporary Signed Supabase Session</span>
+              </div>
+              <button
+                type="button"
+                className="btn-lightbox-done"
+                onClick={() => setPrescriptionLightbox(null)}
+              >
+                Done Viewing
               </button>
             </div>
           </div>
