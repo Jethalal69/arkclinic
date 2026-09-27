@@ -10,6 +10,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export type AppointmentStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled' | string;
 export type AppointmentType = 'video' | 'in_person' | 'home-visit' | 'telephonic' | string;
+export type PaymentStatus = 'pending' | 'paid' | 'failed' | string;
 
 export interface Appointment {
   id: string;
@@ -25,6 +26,11 @@ export interface Appointment {
   meeting_link: string | null;
   calendar_event_id?: string | null;
   prescription_path?: string | null;
+  payment_status?: PaymentStatus | null;
+  payment_order_id?: string | null;
+  payment_id?: string | null;
+  payment_amount?: number | null;
+  payment_currency?: string | null;
   created_at: string;
 }
 

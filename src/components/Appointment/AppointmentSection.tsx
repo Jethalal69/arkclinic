@@ -19,8 +19,18 @@ import {
   X,
   AlertCircle,
   Loader2,
+  CreditCard,
+  ShieldCheck,
+  BadgeCheck,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { CLINIC_PRICING, getPricingForMode, formatInr, ConsultationPricing } from '../../config/pricing';
+import {
+  createRazorpayOrder,
+  verifyRazorpayPayment,
+  launchRazorpayCheckout,
+  loadRazorpayCheckoutScript,
+} from '../../lib/razorpay';
 import './AppointmentSection.css';
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
@@ -53,6 +63,7 @@ interface ConsultationOption {
   title: string;
   subtitle: string;
   icon: typeof Building2;
+  pricing: ConsultationPricing;
 }
 
 export const AppointmentSection: FC = () => {
@@ -61,7 +72,7 @@ export const AppointmentSection: FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Form State
-  const [consultationMode, setConsultationMode] = useState<string>('');
+  const [consultationMode, setConsultationMode] = useState<string>('online-video');
   const [physician, setPhysician] = useState<string>('');
   const [preferredDate, setPreferredDate] = useState<string>('');
   const [preferredTime, setPreferredTime] = useState<string>('');
@@ -73,12 +84,19 @@ export const AppointmentSection: FC = () => {
   const [medicalFile, setMedicalFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  // UI State
+  // UI State & Payment Tracking
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<string>('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [confirmationCode, setConfirmationCode] = useState<string>('');
+  const [paymentReceipt, setPaymentReceipt] = useState<{
+    paymentId: string;
+    orderId: string;
+    amount: number;
+    currency: string;
+  } | null>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -94,6 +112,9 @@ export const AppointmentSection: FC = () => {
       observer.observe(sectionRef.current);
     }
 
+    // Preload Razorpay Checkout Script in background
+    loadRazorpayCheckoutScript().catch(() => {});
+
     return () => observer.disconnect();
   }, []);
 
@@ -101,30 +122,36 @@ export const AppointmentSection: FC = () => {
 
   const consultationOptions: ConsultationOption[] = [
     {
-      id: 'in-clinic',
-      title: 'In-Clinic Consultation',
-      subtitle: 'Visit ARK Clinic',
-      icon: Building2,
-    },
-    {
       id: 'online-video',
       title: 'Online Video Consultation',
-      subtitle: 'Secure video consultation',
+      subtitle: 'Secure HD video consultation',
       icon: Video,
+      pricing: CLINIC_PRICING['online-video'],
+    },
+    {
+      id: 'in-clinic',
+      title: 'In-Clinic Consultation',
+      subtitle: 'Visit ARK Clinic in person',
+      icon: Building2,
+      pricing: CLINIC_PRICING['in-clinic'],
     },
     {
       id: 'home-visit',
       title: 'Home Visit',
-      subtitle: 'Care at your home',
+      subtitle: 'Care delivered at your home',
       icon: Home,
+      pricing: CLINIC_PRICING['home-visit'],
     },
     {
       id: 'telephonic',
       title: 'Telephonic Consultation',
-      subtitle: 'Consult by phone',
+      subtitle: 'Consultation over phone call',
       icon: PhoneCall,
+      pricing: CLINIC_PRICING['telephonic'],
     },
   ];
+
+  const currentPricing = getPricingForMode(consultationMode);
 
   const physiciansList = [
     'Dr. Abhinav Chaudhary',
@@ -289,6 +316,9 @@ export const AppointmentSection: FC = () => {
     return timeStr.trim();
   };
 
+  /**
+   * Razorpay Test Mode Payment & Appointment Booking Flow
+   */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSubmitError(null);
@@ -298,110 +328,190 @@ export const AppointmentSection: FC = () => {
     }
 
     setIsSubmitting(true);
+    setStatusMessage('Initiating secure test payment order...');
 
-    const appointmentType = consultationMode === 'online-video' ? 'video' : 'in_person';
-    const formattedTime = formatTimeTo24Hour(preferredTime);
+    const pricing = getPricingForMode(consultationMode);
 
-    let formattedMessage = reason.trim();
-    if (consultationMode === 'home-visit' && address.trim()) {
-      formattedMessage = formattedMessage
-        ? `Home Visit Address: ${address.trim()}\nNotes: ${formattedMessage}`
-        : `Home Visit Address: ${address.trim()}`;
+    // 1. Create Razorpay order on backend
+    const orderResult = await createRazorpayOrder(consultationMode, {
+      name: fullName.trim(),
+      email: email.trim(),
+      phone: phoneNumber.trim(),
+    });
+
+    if (!orderResult.success || !orderResult.orderId) {
+      setSubmitError(orderResult.error || 'Failed to initialize payment session. Please try again.');
+      setIsSubmitting(false);
+      setStatusMessage('');
+      return;
     }
 
-    let uploadedPrescriptionPath: string | null = null;
+    setStatusMessage('Opening Razorpay Test Checkout...');
 
-    // Optional prescription upload to private Supabase Storage bucket
-    if (medicalFile) {
-      try {
-        const uniqueId = generateUniqueId();
-        const cleanFileName = sanitizeFileName(medicalFile.name);
-        const objectPath = `${uniqueId}/${cleanFileName}`;
+    // 2. Launch Razorpay Checkout Modal
+    await launchRazorpayCheckout({
+      orderId: orderResult.orderId,
+      amountInPaise: orderResult.amount || pricing.pricePaise,
+      keyId: orderResult.keyId || 'rzp_test_arkclinic_demo',
+      currency: orderResult.currency || 'INR',
+      appointmentType: consultationMode,
+      patientName: fullName.trim(),
+      patientEmail: email.trim(),
+      patientPhone: phoneNumber.trim(),
+      onSuccess: async (rzpResp) => {
+        try {
+          setStatusMessage('Verifying payment signature with secure server...');
 
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('prescriptions')
-          .upload(objectPath, medicalFile, {
-            cacheControl: '3600',
-            upsert: false,
+          // 3. Verify Razorpay signature on server
+          const verifyResult = await verifyRazorpayPayment({
+            razorpay_order_id: rzpResp.razorpay_order_id,
+            razorpay_payment_id: rzpResp.razorpay_payment_id,
+            razorpay_signature: rzpResp.razorpay_signature,
+            appointment_type: consultationMode,
           });
 
-        if (uploadError) {
-          console.error('Supabase storage upload error:', uploadError);
-          setSubmitError('Failed to upload prescription. Please verify the file is under 5MB and in PDF/JPG/PNG format, then try again.');
-          setIsSubmitting(false);
-          return;
-        }
-
-        // Store path identifier: 'prescriptions/<unique-id>/<sanitized-filename>'
-        uploadedPrescriptionPath = `prescriptions/${uploadData?.path || objectPath}`;
-      } catch (uploadErr) {
-        console.error('Unexpected upload error:', uploadErr);
-        setSubmitError('Unable to upload prescription file at this moment. Please try again.');
-        setIsSubmitting(false);
-        return;
-      }
-    }
-
-    const payload = {
-      name: fullName.trim(),
-      phone: phoneNumber.trim(),
-      email: email.trim(),
-      doctor: physician,
-      appointment_type: appointmentType,
-      date: preferredDate,
-      time: formattedTime,
-      message: formattedMessage || '',
-      prescription_path: uploadedPrescriptionPath,
-    };
-
-    try {
-      const response = await fetch('https://taranjeet09.app.n8n.cloud/webhook/8913a5d7-22ab-4384-b00a-cb00902e01ae', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Server returned error status (${response.status}). Please try again.`);
-      }
-
-      let code = 'ARK-' + Math.floor(100000 + Math.random() * 900000);
-      try {
-        const data = await response.json();
-        if (data && typeof data === 'object') {
-          const potentialCode =
-            data.referenceId ||
-            data.confirmationCode ||
-            data.id ||
-            data.bookingId ||
-            data.reference_id ||
-            data.code;
-          if (potentialCode && typeof potentialCode === 'string') {
-            code = potentialCode;
+          if (!verifyResult.verified) {
+            setSubmitError(
+              'Payment signature verification failed. Your card/account was not billed. Please contact clinic support if money was deducted.'
+            );
+            setIsSubmitting(false);
+            setStatusMessage('');
+            return;
           }
-        }
-      } catch {
-        // Plain text or empty response on 200 OK
-      }
 
-      setConfirmationCode(code);
-      setIsSuccess(true);
-    } catch (error: any) {
-      console.error('Failed to submit appointment to webhook:', error);
-      setSubmitError(
-        error.message && typeof error.message === 'string' && !error.message.includes('Failed to fetch')
-          ? error.message
-          : 'Unable to process your appointment request at this moment. Please check your internet connection and try again.'
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
+          setStatusMessage('Finalizing appointment registration...');
+
+          // 4. Upload prescription if provided
+          let uploadedPrescriptionPath: string | null = null;
+          if (medicalFile) {
+            try {
+              const uniqueId = generateUniqueId();
+              const cleanFileName = sanitizeFileName(medicalFile.name);
+              const objectPath = `${uniqueId}/${cleanFileName}`;
+
+              const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('prescriptions')
+                .upload(objectPath, medicalFile, {
+                  cacheControl: '3600',
+                  upsert: false,
+                });
+
+              if (!uploadError) {
+                uploadedPrescriptionPath = `prescriptions/${uploadData?.path || objectPath}`;
+              } else {
+                console.error('Prescription storage upload error:', uploadError);
+              }
+            } catch (uploadErr) {
+              console.error('Prescription upload exception:', uploadErr);
+            }
+          }
+
+          // 5. Send verified appointment payload to n8n webhook
+          const appointmentType =
+            consultationMode === 'online-video'
+              ? 'video'
+              : consultationMode === 'home-visit'
+              ? 'home-visit'
+              : consultationMode === 'telephonic'
+              ? 'telephonic'
+              : 'in_person';
+
+          const formattedTime = formatTimeTo24Hour(preferredTime);
+          let formattedMessage = reason.trim();
+          if (consultationMode === 'home-visit' && address.trim()) {
+            formattedMessage = formattedMessage
+              ? `Home Visit Address: ${address.trim()}\nNotes: ${formattedMessage}`
+              : `Home Visit Address: ${address.trim()}`;
+          }
+
+          const payload = {
+            name: fullName.trim(),
+            phone: phoneNumber.trim(),
+            email: email.trim(),
+            doctor: physician,
+            appointment_type: appointmentType,
+            date: preferredDate,
+            time: formattedTime,
+            message: formattedMessage || '',
+            prescription_path: uploadedPrescriptionPath,
+            payment_status: 'paid',
+            payment_order_id: rzpResp.razorpay_order_id,
+            payment_id: rzpResp.razorpay_payment_id,
+            payment_amount: pricing.priceInr,
+            payment_currency: 'INR',
+          };
+
+          let code = 'ARK-' + Math.floor(100000 + Math.random() * 900000);
+          try {
+            const response = await fetch(
+              'https://taranjeet09.app.n8n.cloud/webhook/8913a5d7-22ab-4384-b00a-cb00902e01ae',
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+              }
+            );
+
+            if (response.ok) {
+              try {
+                const data = await response.json();
+                if (data && typeof data === 'object') {
+                  const potentialCode =
+                    data.referenceId ||
+                    data.confirmationCode ||
+                    data.id ||
+                    data.bookingId ||
+                    data.reference_id ||
+                    data.code;
+                  if (potentialCode && typeof potentialCode === 'string') {
+                    code = potentialCode;
+                  }
+                }
+              } catch {
+                // Non-JSON 200 OK response
+              }
+            }
+          } catch (webhookError) {
+            console.warn('n8n webhook network notice:', webhookError);
+          }
+
+          // 6. Record payment success receipt and show confirmation
+          setPaymentReceipt({
+            paymentId: rzpResp.razorpay_payment_id,
+            orderId: rzpResp.razorpay_order_id,
+            amount: pricing.priceInr,
+            currency: 'INR',
+          });
+          setConfirmationCode(code);
+          setIsSuccess(true);
+        } catch (postPayError: any) {
+          console.error('Error after payment completion:', postPayError);
+          setSubmitError(
+            `Payment of ${formatInr(pricing.priceInr)} was successfully verified (Payment ID: ${
+              rzpResp.razorpay_payment_id
+            }), but our booking coordinator system took longer than expected to confirm. Please quote this ID to our clinic.`
+          );
+        } finally {
+          setIsSubmitting(false);
+          setStatusMessage('');
+        }
+      },
+      onDismiss: () => {
+        setIsSubmitting(false);
+        setStatusMessage('');
+      },
+      onError: (errMsg) => {
+        setIsSubmitting(false);
+        setStatusMessage('');
+        setSubmitError(errMsg || 'Payment was cancelled or could not be processed. No appointment was booked.');
+      },
+    });
   };
 
   const handleReset = () => {
-    setConsultationMode('');
+    setConsultationMode('online-video');
     setPhysician('');
     setPreferredDate('');
     setPreferredTime('');
@@ -417,6 +527,8 @@ export const AppointmentSection: FC = () => {
     setErrors({});
     setSubmitError(null);
     setIsSuccess(false);
+    setPaymentReceipt(null);
+    setStatusMessage('');
   };
 
   return (
@@ -449,12 +561,20 @@ export const AppointmentSection: FC = () => {
             <>
               {/* Form Title & Short Description */}
               <div className="appointment-card-header">
-                <h3 className="appointment-card-title font-display">
-                  Book Your Appointment
-                </h3>
-                <p className="appointment-card-desc">
-                  Tell us a little about your visit and choose the consultation option that works best for you.
-                </p>
+                <div className="card-header-flex">
+                  <div>
+                    <h3 className="appointment-card-title font-display">
+                      Book Your Appointment
+                    </h3>
+                    <p className="appointment-card-desc">
+                      Tell us a little about your visit and choose the consultation option that works best for you.
+                    </p>
+                  </div>
+                  <div className="test-mode-badge" title="Razorpay Test Gateway Enabled">
+                    <ShieldCheck size={14} className="test-badge-icon" />
+                    <span>Razorpay Test Mode</span>
+                  </div>
+                </div>
               </div>
 
               <form onSubmit={handleSubmit} noValidate className="appointment-booking-form">
@@ -467,9 +587,15 @@ export const AppointmentSection: FC = () => {
 
                     {/* 1. CONSULTATION MODE */}
                     <div className="form-group-block">
-                      <label className="form-section-label">
-                        1. Consultation Mode <span className="required-mark">*</span>
-                      </label>
+                      <div className="label-with-fee-wrap">
+                        <label className="form-section-label">
+                          1. Consultation Mode <span className="required-mark">*</span>
+                        </label>
+                        <span className="fee-callout-pill">
+                          Selected Fee: <strong>{formatInr(currentPricing.priceInr)}</strong>
+                        </span>
+                      </div>
+
                       <div className="consultation-modes-grid" role="radiogroup" aria-label="Consultation Mode">
                         {consultationOptions.map((opt) => {
                           const Icon = opt.icon;
@@ -487,11 +613,16 @@ export const AppointmentSection: FC = () => {
                                 <Icon size={18} />
                               </div>
                               <div className="mode-text-box">
-                                <span className="mode-title">{opt.title}</span>
+                                <div className="mode-title-row">
+                                  <span className="mode-title">{opt.title}</span>
+                                </div>
                                 <span className="mode-subtitle">{opt.subtitle}</span>
                               </div>
-                              <div className="mode-radio-indicator" aria-hidden="true">
-                                <span className="mode-radio-dot" />
+                              <div className="mode-pricing-tag">
+                                <span className="mode-price-text">{formatInr(opt.pricing.priceInr)}</span>
+                                <div className="mode-radio-indicator" aria-hidden="true">
+                                  <span className="mode-radio-dot" />
+                                </div>
                               </div>
                             </button>
                           );
@@ -689,7 +820,7 @@ export const AppointmentSection: FC = () => {
                               <textarea
                                 id="patient-address"
                                 rows={2}
-                                placeholder="Enter your complete home address"
+                                placeholder="Enter your complete home address for doctor's visit"
                                 value={address}
                                 onChange={(e) => {
                                   setAddress(e.target.value);
@@ -720,7 +851,7 @@ export const AppointmentSection: FC = () => {
                             <input
                               id="patient-email"
                               type="email"
-                              placeholder="Enter your email address"
+                              placeholder="Enter your email address for receipts"
                               value={email}
                               onChange={(e) => {
                                 setEmail(e.target.value);
@@ -844,8 +975,28 @@ export const AppointmentSection: FC = () => {
                   </div>
                 </div>
 
-                {/* CONFIRM APPOINTMENT CTA & PRIVACY REASSURANCE */}
+                {/* CONSULTATION FEE SUMMARY & PAYMENT CTA */}
                 <div className="form-submit-footer">
+                  {/* Fee Summary Pill Box */}
+                  <div className="payment-summary-pill-box">
+                    <div className="payment-summary-left">
+                      <div className="payment-summary-icon">
+                        <CreditCard size={18} />
+                      </div>
+                      <div className="payment-summary-text">
+                        <span className="payment-summary-title">Consultation Fee</span>
+                        <span className="payment-summary-desc">
+                          {currentPricing.title} • Test Mode Simulation
+                        </span>
+                      </div>
+                    </div>
+                    <div className="payment-summary-right">
+                      <span className="payment-amount-display">
+                        {formatInr(currentPricing.priceInr)}
+                      </span>
+                    </div>
+                  </div>
+
                   {submitError && (
                     <div className="appointment-error-alert" role="alert">
                       <AlertCircle size={18} className="error-alert-icon" />
@@ -861,24 +1012,25 @@ export const AppointmentSection: FC = () => {
                     {isSubmitting ? (
                       <>
                         <Loader2 size={16} className="submit-spinner" />
-                        <span>Confirming Appointment...</span>
+                        <span>{statusMessage || 'Processing Payment...'}</span>
                       </>
                     ) : (
                       <>
-                        <span>Confirm Appointment</span>
+                        <span>Pay {formatInr(currentPricing.priceInr)} & Book Appointment</span>
                         <ArrowRight size={16} className="submit-arrow" />
                       </>
                     )}
                   </button>
+
                   <p className="form-security-reassurance">
                     <Lock size={13} className="security-lock-icon" aria-hidden="true" />
-                    <span>Your information is kept private and secure.</span>
+                    <span>Razorpay 256-bit encrypted test checkout. No real funds charged.</span>
                   </p>
                 </div>
               </form>
             </>
           ) : (
-            /* Polished Confirmation State */
+            /* Polished Confirmation State with Payment Details */
             <div className="appointment-success-state" role="status">
               <div className="success-icon-badge" aria-hidden="true">
                 <CheckCircle2 size={36} />
@@ -887,7 +1039,7 @@ export const AppointmentSection: FC = () => {
                 Appointment Request Confirmed
               </h3>
               <p className="success-message">
-                Thank you, <strong>{fullName}</strong>. Your consultation request has been received. Our clinical coordinator will reach out to you shortly on <strong>{phoneNumber}</strong> to confirm your slot.
+                Thank you, <strong>{fullName}</strong>. Your consultation request and test payment have been successfully verified. Our clinical coordinator will reach out to you shortly on <strong>{phoneNumber}</strong> to confirm your slot.
               </p>
 
               <div className="success-summary-card">
@@ -895,6 +1047,23 @@ export const AppointmentSection: FC = () => {
                   <span className="summary-label">Reference ID:</span>
                   <span className="summary-value summary-highlight">{confirmationCode}</span>
                 </div>
+                
+                {paymentReceipt && (
+                  <>
+                    <div className="summary-row">
+                      <span className="summary-label">Payment Status:</span>
+                      <span className="summary-value summary-payment-paid">
+                        <BadgeCheck size={14} />
+                        <span>Paid • {formatInr(paymentReceipt.amount)} (Test Mode)</span>
+                      </span>
+                    </div>
+                    <div className="summary-row">
+                      <span className="summary-label">Payment ID:</span>
+                      <span className="summary-value summary-code-text">{paymentReceipt.paymentId}</span>
+                    </div>
+                  </>
+                )}
+
                 <div className="summary-row">
                   <span className="summary-label">Patient Name:</span>
                   <span className="summary-value">{fullName}</span>

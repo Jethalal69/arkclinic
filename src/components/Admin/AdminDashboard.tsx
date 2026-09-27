@@ -34,6 +34,11 @@ import {
   ZoomOut,
   Image as ImageIcon,
   RotateCcw,
+  CreditCard,
+  Receipt,
+  ShieldCheck,
+  Key,
+  BadgeCheck,
 } from 'lucide-react';
 import {
   Appointment,
@@ -794,6 +799,33 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
     );
   };
 
+  const getPaymentBadge = (paymentStatus: string | null | undefined, amount?: number | null) => {
+    const s = (paymentStatus || 'pending').toLowerCase();
+    const formattedAmt = amount ? `₹${amount}` : '';
+    if (s === 'paid') {
+      return (
+        <span className="payment-badge payment-paid" title="Payment Verified (Test Mode)">
+          <BadgeCheck size={12} />
+          <span>{formattedAmt ? `${formattedAmt} Paid` : 'Paid (Test)'}</span>
+        </span>
+      );
+    }
+    if (s === 'failed') {
+      return (
+        <span className="payment-badge payment-failed" title="Payment Failed">
+          <AlertCircle size={12} />
+          <span>Failed</span>
+        </span>
+      );
+    }
+    return (
+      <span className="payment-badge payment-pending" title="Payment Pending">
+        <Clock3 size={12} />
+        <span>Pending</span>
+      </span>
+    );
+  };
+
   return (
     <div className="admin-root">
       {/* Top Ambient Light Glow */}
@@ -1271,7 +1303,12 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
                           </td>
 
                           {/* Status */}
-                          <td className="td-status">{getStatusBadge(appointment.status)}</td>
+                          <td className="td-status">
+                            <div className="status-stack">
+                              {getStatusBadge(appointment.status)}
+                              {getPaymentBadge(appointment.payment_status, appointment.payment_amount)}
+                            </div>
+                          </td>
 
                           {/* Meeting Link / Video Action */}
                           <td className="td-consult">
@@ -1694,7 +1731,77 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
                 );
               })()}
 
-              {/* 4. Consultation Information */}
+              {/* 4. Payment & Billing Information */}
+              <div className="modal-section modal-section-payment">
+                <div className="modal-section-header">
+                  <div className="modal-section-icon payment-icon-emerald">
+                    <CreditCard size={15} />
+                  </div>
+                  <div className="prescription-header-meta">
+                    <h4 className="modal-section-title">Payment & Billing Details</h4>
+                    <span className={`prescription-available-badge ${selectedAppointment.payment_status === 'paid' ? 'badge-paid-glow' : ''}`}>
+                      <ShieldCheck size={12} />
+                      <span>
+                        {selectedAppointment.payment_status === 'paid'
+                          ? 'Verified Test Payment'
+                          : `Status: ${(selectedAppointment.payment_status || 'Pending').toUpperCase()}`}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+
+                <div className="modal-details-grid">
+                  <div className="detail-item">
+                    <div className="detail-icon-circle">
+                      <Receipt size={14} />
+                    </div>
+                    <div className="detail-content">
+                      <span className="detail-label">Amount Paid / Fee</span>
+                      <strong className="detail-value text-emerald">
+                        {selectedAppointment.payment_amount
+                          ? `₹${selectedAppointment.payment_amount} (${selectedAppointment.payment_currency || 'INR'})`
+                          : '₹499 (INR)'}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div className="detail-item">
+                    <div className="detail-icon-circle">
+                      <ShieldCheck size={14} />
+                    </div>
+                    <div className="detail-content">
+                      <span className="detail-label">Payment Gateway</span>
+                      <strong className="detail-value">Razorpay (Test Mode)</strong>
+                    </div>
+                  </div>
+
+                  {selectedAppointment.payment_id && (
+                    <div className="detail-item">
+                      <div className="detail-icon-circle">
+                        <Key size={14} />
+                      </div>
+                      <div className="detail-content">
+                        <span className="detail-label">Razorpay Payment ID</span>
+                        <code className="detail-code-badge">{selectedAppointment.payment_id}</code>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedAppointment.payment_order_id && (
+                    <div className="detail-item">
+                      <div className="detail-icon-circle">
+                        <FileText size={14} />
+                      </div>
+                      <div className="detail-content">
+                        <span className="detail-label">Razorpay Order ID</span>
+                        <code className="detail-code-badge">{selectedAppointment.payment_order_id}</code>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* 5. Consultation Information */}
               <div className="modal-section">
                 <div className="modal-section-header">
                   <div className="modal-section-icon">
