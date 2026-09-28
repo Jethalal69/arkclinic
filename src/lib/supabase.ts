@@ -31,6 +31,8 @@ export interface Appointment {
   payment_id?: string | null;
   payment_amount?: number | null;
   payment_currency?: string | null;
+  reminder_24h_sent?: boolean;
+  reminder_2h_sent?: boolean;
   created_at: string;
 }
 
