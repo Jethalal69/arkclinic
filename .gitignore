@@ -33,3 +33,10 @@ lerna-debug.log*
 *.sln
 *.sw?
 Thumbs.db
+
+# Security & Keys
+jwks.json
+jwks*.json
+*.pem
+*.key
+
