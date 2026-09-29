@@ -10,6 +10,72 @@ declare global {
 const CHECKOUT_SCRIPT_URL = 'https://checkout.razorpay.com/v1/checkout.js';
 
 /**
+ * Check whether Razorpay Demo Mode is enabled.
+ * Controlled by VITE_RAZORPAY_DEMO_MODE environment variable.
+ * Defaults to true for test/client-demo environment if not explicitly set to 'false'.
+ */
+export function isRazorpayDemoMode(): boolean {
+  const envVal = import.meta.env.VITE_RAZORPAY_DEMO_MODE;
+  if (typeof envVal === 'string') {
+    return envVal.toLowerCase() === 'true';
+  }
+  if (typeof envVal === 'boolean') {
+    return envVal;
+  }
+  return true;
+}
+
+export interface SimulateDemoPaymentOptions {
+  appointmentType: string;
+  patientName: string;
+  patientEmail?: string;
+  patientPhone?: string;
+}
+
+export interface DemoPaymentResult {
+  success: boolean;
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+  amountInr: number;
+  currency: string;
+}
+
+/**
+ * Simulate a successful demo payment without opening Razorpay checkout.
+ * Generates clearly marked demo/test payment reference IDs (e.g. demo_order_<uuid>, demo_pay_<uuid>).
+ */
+export async function simulateDemoPayment(
+  options: SimulateDemoPaymentOptions
+): Promise<DemoPaymentResult> {
+  const pricing = getPricingForMode(options.appointmentType);
+
+  const generateUuid = (): string => {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      return crypto.randomUUID();
+    }
+    return `${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 10)}`;
+  };
+
+  const uuid = generateUuid();
+  const demoOrderId = `demo_order_${uuid}`;
+  const demoPaymentId = `demo_pay_${uuid}`;
+  const demoSignature = `demo_sig_${uuid}`;
+
+  // Brief latency to simulate payment network processing
+  await new Promise((resolve) => setTimeout(resolve, 600));
+
+  return {
+    success: true,
+    razorpay_order_id: demoOrderId,
+    razorpay_payment_id: demoPaymentId,
+    razorpay_signature: demoSignature,
+    amountInr: pricing.priceInr,
+    currency: 'INR',
+  };
+}
+
+/**
  * Dynamically load Razorpay Checkout SDK if not already in document
  */
 export function loadRazorpayCheckoutScript(): Promise<boolean> {
