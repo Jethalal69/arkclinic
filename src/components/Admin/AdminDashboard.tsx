@@ -1224,7 +1224,10 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
                   </thead>
                   <tbody>
                     {filteredAppointments.map((appointment) => {
-                      const isVideo = (appointment.appointment_type || '').toLowerCase().includes('video');
+                      const apptType = (appointment.appointment_type || 'in_person').toLowerCase();
+                      const isVideo = apptType.includes('video');
+                      const isHome = apptType.includes('home');
+                      const isTelephonic = apptType.includes('telephonic');
                       const hasMeetLink = Boolean(appointment.meeting_link && appointment.meeting_link.trim());
                       const status = (appointment.status || '').toLowerCase();
                       const isConfirmed = status === 'confirmed';
@@ -1353,6 +1356,24 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
                                   <span className="no-meet-link">
                                     <Video size={13} />
                                     <span>Link Pending</span>
+                                  </span>
+                                );
+                              }
+
+                              if (isHome) {
+                                return (
+                                  <span className="in-person-note">
+                                    <Home size={13} />
+                                    <span>Home Visit</span>
+                                  </span>
+                                );
+                              }
+
+                              if (isTelephonic) {
+                                return (
+                                  <span className="in-person-note">
+                                    <PhoneCall size={13} />
+                                    <span>Telephonic Consultation</span>
                                   </span>
                                 );
                               }
