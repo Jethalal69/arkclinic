@@ -48,6 +48,7 @@ import {
   updateAppointmentStatus,
   supabase,
 } from '../../lib/supabase';
+import { formatTimeTo12Hour } from '../../lib/timeUtils';
 import {
   logoutAdmin,
   recordAdminActivity,
@@ -717,19 +718,10 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
     }
   };
 
-  const formatDisplayTime = (timeStr: string | null) => {
+  const formatDisplayTime = (timeStr: string | null | undefined) => {
     if (!timeStr) return 'Time not set';
-    // If it's already HH:MM:SS or HH:MM
-    const parts = timeStr.split(':');
-    if (parts.length >= 2) {
-      let hours = parseInt(parts[0], 10);
-      const minutes = parts[1];
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12;
-      return `${hours}:${minutes} ${ampm}`;
-    }
-    return timeStr;
+    const formatted = formatTimeTo12Hour(timeStr);
+    return formatted || 'Time not set';
   };
 
   const getStatusBadge = (status: string) => {

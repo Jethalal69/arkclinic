@@ -25,14 +25,8 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { CLINIC_PRICING, getPricingForMode, formatInr, ConsultationPricing } from '../../config/pricing';
-import {
-  createRazorpayOrder,
-  verifyRazorpayPayment,
-  launchRazorpayCheckout,
-  loadRazorpayCheckoutScript,
-  isRazorpayDemoMode,
-  simulateDemoPayment,
-} from '../../lib/razorpay';
+import { isRazorpayDemoMode, simulateDemoPayment, launchRazorpayCheckout, verifyRazorpayPayment, createRazorpayOrder, loadRazorpayCheckoutScript } from '../../lib/razorpay';
+import { formatTimeTo12Hour } from '../../lib/timeUtils';
 import './AppointmentSection.css';
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
@@ -299,27 +293,6 @@ export const AppointmentSection: FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const formatTimeTo24Hour = (timeStr: string): string => {
-    if (!timeStr) return '';
-    const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
-    if (match) {
-      let hours = parseInt(match[1], 10);
-      const minutes = match[2];
-      const period = match[3].toUpperCase();
-      if (period === 'AM') {
-        if (hours === 12) hours = 0;
-      } else if (period === 'PM') {
-        if (hours !== 12) hours += 12;
-      }
-      return `${hours.toString().padStart(2, '0')}:${minutes}`;
-    }
-    if (/^\d{1,2}:\d{2}$/.test(timeStr.trim())) {
-      const [h, m] = timeStr.trim().split(':');
-      return `${h.padStart(2, '0')}:${m}`;
-    }
-    return timeStr.trim();
-  };
-
   const isDemoActive = isRazorpayDemoMode();
 
   /**
@@ -370,7 +343,7 @@ export const AppointmentSection: FC = () => {
         ? 'telephonic'
         : 'in_person';
 
-    const formattedTime = formatTimeTo24Hour(preferredTime);
+    const formattedTime = formatTimeTo12Hour(preferredTime);
     const cleanMessage = reason.trim();
     const homeAddress = consultationMode === 'home-visit' && address.trim() ? address.trim() : null;
 
