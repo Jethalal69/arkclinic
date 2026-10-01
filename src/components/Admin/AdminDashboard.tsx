@@ -39,6 +39,7 @@ import {
   ShieldCheck,
   Key,
   BadgeCheck,
+  MapPin,
 } from 'lucide-react';
 import {
   Appointment,
@@ -441,8 +442,9 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
         const emailMatch = (appointment.email || '').toLowerCase().includes(q);
         const doctorMatch = (appointment.doctor || '').toLowerCase().includes(q);
         const msgMatch = (appointment.message || '').toLowerCase().includes(q);
+        const addressMatch = (appointment.address || '').toLowerCase().includes(q);
 
-        if (!nameMatch && !phoneMatch && !emailMatch && !doctorMatch && !msgMatch) {
+        if (!nameMatch && !phoneMatch && !emailMatch && !doctorMatch && !msgMatch && !addressMatch) {
           return false;
         }
       }
@@ -1648,14 +1650,29 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
                   </div>
                 </div>
 
-                {/* Patient Symptoms / Clinical Notes if present */}
-                {selectedAppointment.message && (
+                {/* Dedicated Address Section (Shown only when address exists or appointment type is Home Visit) */}
+                {((selectedAppointment.address && selectedAppointment.address.trim()) || (selectedAppointment.appointment_type || '').toLowerCase().includes('home')) && (
+                  <div className="modal-address-section">
+                    <div className="address-header">
+                      <MapPin size={14} />
+                      <span>Address</span>
+                    </div>
+                    <p className="address-content">
+                      {selectedAppointment.address && selectedAppointment.address.trim()
+                        ? selectedAppointment.address.trim()
+                        : 'Address not specified'}
+                    </p>
+                  </div>
+                )}
+
+                {/* Patient Notes / Clinical Notes if present */}
+                {selectedAppointment.message && selectedAppointment.message.trim() && (
                   <div className="modal-notes-section">
                     <div className="notes-header">
                       <FileText size={14} />
-                      <span>Patient Symptoms & Clinical Notes</span>
+                      <span>Patient Notes / Clinical Notes</span>
                     </div>
-                    <p className="notes-content">{selectedAppointment.message}</p>
+                    <p className="notes-content">{selectedAppointment.message.trim()}</p>
                   </div>
                 )}
               </div>
@@ -1930,8 +1947,44 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
                     );
                   }
 
-                  // 4. For in-person appointments (confirmed or completed)
+                  // 4. For in-person, home visit, and telephonic appointments (confirmed or completed)
                   if (!isVideo) {
+                    const isHome = (selectedAppointment.appointment_type || '').toLowerCase().includes('home');
+                    const isTelephonic = (selectedAppointment.appointment_type || '').toLowerCase().includes('telephonic');
+                    if (isHome) {
+                      return (
+                        <div className="modal-consultation-card consult-in-person-state">
+                          <div className="consult-card-header">
+                            <div className="consult-badge-icon clinic-icon-bg">
+                              <Home size={16} />
+                            </div>
+                            <div>
+                              <strong className="consult-headline">Home Visit Consultation</strong>
+                              <p className="consult-subtext">
+                                Doctor visit to patient's address{selectedAppointment.address ? `: ${selectedAppointment.address}` : '.'}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                    if (isTelephonic) {
+                      return (
+                        <div className="modal-consultation-card consult-in-person-state">
+                          <div className="consult-card-header">
+                            <div className="consult-badge-icon clinic-icon-bg">
+                              <PhoneCall size={16} />
+                            </div>
+                            <div>
+                              <strong className="consult-headline">Telephonic Consultation</strong>
+                              <p className="consult-subtext">
+                                Doctor will call the patient at {selectedAppointment.phone || 'their registered phone number'}.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
                     return (
                       <div className="modal-consultation-card consult-in-person-state">
                         <div className="consult-card-header">

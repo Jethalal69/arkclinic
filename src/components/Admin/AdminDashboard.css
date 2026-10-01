@@ -1296,7 +1296,39 @@
   margin-top: 2px;
 }
 
-/* Notes & Message Section */
+/* Notes & Address Section in Detail Modal */
+.modal-address-section {
+  background: #FFFDF9;
+  border: 1px solid #EBE0CF;
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.modal-address-section + .modal-notes-section {
+  margin-top: 12px;
+}
+
+.address-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #8C6219;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.address-content {
+  font-size: 13px;
+  color: #1A1715;
+  font-weight: 600;
+  line-height: 1.55;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
 .modal-notes-section {
   background: #FFFDF9;
   border: 1px solid #EBE0CF;

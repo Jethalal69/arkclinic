@@ -371,12 +371,8 @@ export const AppointmentSection: FC = () => {
         : 'in_person';
 
     const formattedTime = formatTimeTo24Hour(preferredTime);
-    let formattedMessage = reason.trim();
-    if (consultationMode === 'home-visit' && address.trim()) {
-      formattedMessage = formattedMessage
-        ? `Home Visit Address: ${address.trim()}\nNotes: ${formattedMessage}`
-        : `Home Visit Address: ${address.trim()}`;
-    }
+    const cleanMessage = reason.trim();
+    const homeAddress = consultationMode === 'home-visit' && address.trim() ? address.trim() : null;
 
     // 3. Exact appointment payload
     const payload = {
@@ -387,7 +383,8 @@ export const AppointmentSection: FC = () => {
       appointment_type: appointmentType,
       date: preferredDate,
       time: formattedTime,
-      message: formattedMessage || '',
+      message: cleanMessage || '',
+      address: homeAddress,
       prescription_path: uploadedPrescriptionPath,
       payment_status: 'paid',
       payment_order_id: paymentDetails.orderId,
