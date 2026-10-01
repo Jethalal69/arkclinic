@@ -284,9 +284,9 @@ export const AppointmentSection: FC = () => {
       newErrors.phoneNumber = 'Please enter a valid 10-digit phone number.';
     }
 
-    // Home Visit requires address
+    // Home Visit requires address (free-form text, only required to be non-empty)
     if (consultationMode === 'home-visit') {
-      if (!address.trim() || address.trim().length < 5) {
+      if (!address.trim()) {
         newErrors.address = 'Please enter your complete address for the home visit.';
       }
     }
@@ -815,6 +815,8 @@ export const AppointmentSection: FC = () => {
                             <User size={16} className="input-prefix-icon" aria-hidden="true" />
                             <input
                               id="patient-fullname"
+                              name="fullName"
+                              autoComplete="name"
                               type="text"
                               placeholder="Enter your full name"
                               value={fullName}
@@ -845,6 +847,8 @@ export const AppointmentSection: FC = () => {
                             <Phone size={16} className="input-prefix-icon" aria-hidden="true" />
                             <input
                               id="patient-phone"
+                              name="phone"
+                              autoComplete="tel"
                               type="tel"
                               placeholder="Enter your 10-digit phone number"
                               value={phoneNumber}
@@ -876,6 +880,8 @@ export const AppointmentSection: FC = () => {
                               <MapPin size={16} className="input-prefix-icon textarea-prefix-icon" aria-hidden="true" />
                               <textarea
                                 id="patient-address"
+                                name="street-address"
+                                autoComplete="street-address"
                                 rows={2}
                                 placeholder="Enter your complete home address for doctor's visit"
                                 value={address}
@@ -907,6 +913,8 @@ export const AppointmentSection: FC = () => {
                             <Mail size={16} className="input-prefix-icon" aria-hidden="true" />
                             <input
                               id="patient-email"
+                              name="email"
+                              autoComplete="email"
                               type="email"
                               placeholder="Enter your email address for receipts"
                               value={email}
