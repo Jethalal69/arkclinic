@@ -859,12 +859,12 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ onNavigateHome, onLogo
           <div className="admin-header-actions">
             <button
               type="button"
-              className={`admin-refresh-btn ${isRefreshing ? 'spinning' : ''}`}
+              className="admin-refresh-btn"
               onClick={() => loadData(true)}
               disabled={isLoading || isRefreshing}
               title="Fetch latest appointments from Supabase"
             >
-              <RefreshCw size={16} />
+              <RefreshCw size={16} className={isRefreshing ? 'spinning' : ''} />
               <span>{isRefreshing ? 'Syncing...' : 'Refresh'}</span>
             </button>
             <div className="admin-live-pill">

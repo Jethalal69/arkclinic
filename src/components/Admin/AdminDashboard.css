@@ -178,7 +178,6 @@
   cursor: not-allowed;
 }
 
-.admin-refresh-btn.spinning svg,
 .spinning {
   animation: spin 1s linear infinite;
 }
